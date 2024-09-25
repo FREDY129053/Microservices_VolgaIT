@@ -1,0 +1,9 @@
+POST http://localhost:8081/api/Authentication/SignUp
+content-Type: application/json
+
+{
+  "last_name": "Zverev",
+  "first_name": "Rodion",
+  "username": "fredy129053",
+  "password": "12345"
+}

@@ -5,12 +5,14 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"account_microservice/controllers"
 )
 
 func main() {
 	router := gin.Default()
 	defer router.Run("127.0.0.1:8081")
 
+	// CORS
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
@@ -21,7 +23,5 @@ func main() {
 	router.Use(cors.New(config))
 
 	accounts := router.Group("/api")
-	accounts.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "test"})
-	})
+	accounts.POST("/Authentication/SignUp", controllers.Signup)
 }
