@@ -7,3 +7,25 @@ content-Type: application/json
   "username": "fredy129053",
   "password": "12345"
 }
+
+POST http://localhost:8081/api/Authentication/SignIn
+content-Type: application/json
+
+{
+  "username": "fredy129053",
+  "password": "12345"
+}
+
+
+POST http://localhost:8081/api/Authentication/Refresh
+content-Type: application/json
+
+{
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJ1c2VyIl0sInVzZXJuYW1lIjoiZnJlZHkxMjkwNTMiLCJleHAiOjE3MjczMzIwMTksInN1YiI6ImZyZWR5MTI5MDUzIn0.uxsov5CdqxaetWo898tMUEjb8rBuzPmZMQ9mPsmz5Ws"
+}
+
+
+PUT http://localhost:8081/api/Authentication/SignOut
+
+
+GET http://localhost:8081/api/Authentication/Validate?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJ1c2VyIl0sInVzZXJuYW1lIjoiZnJlZHkxMjkwNTMiLCJleHAiOjE3MjczMTQzMTksInN1YiI6ImZyZWR5MTI5MDUzIn0.A-723_Uya6Xw5iyuE2VIPCjen3w7N7OjWFRZCJaiTU0

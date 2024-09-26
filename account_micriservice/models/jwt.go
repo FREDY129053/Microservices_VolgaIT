@@ -5,11 +5,8 @@ import "github.com/dgrijalva/jwt-go"
 
 type Claims struct {
 	Roles []string `json:"roles"`
+	Username string `json:"username"`
 	jwt.StandardClaims
-}
-
-type ValidateToken struct {
-	AccessToken string `json:"access_token"`
 }
 
 type RefreshToken struct {

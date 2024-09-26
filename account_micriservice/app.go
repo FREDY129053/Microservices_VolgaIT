@@ -3,9 +3,11 @@ package main
 import (
 	"time"
 
+	"account_microservice/controllers"
+	"account_microservice/middlewares"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"account_microservice/controllers"
 )
 
 func main() {
@@ -24,4 +26,8 @@ func main() {
 
 	accounts := router.Group("/api")
 	accounts.POST("/Authentication/SignUp", controllers.Signup)
+	accounts.POST("/Authentication/SignIn", controllers.Signin)
+	accounts.PUT("/Authentication/SignOut", middlewares.IsAuthorized(), controllers.SignOut)
+	accounts.GET("/Authentication/Validate", controllers.VerifyingToken)
+	accounts.POST("/Authentication/Refresh", controllers.RefreshAccessToken)
 }

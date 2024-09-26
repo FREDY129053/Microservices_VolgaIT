@@ -10,6 +10,7 @@ type SignupUser struct {
 
 // Информация о пользователи
 type UserInfo struct {
+	UUID      string   `json:"uuid"`
 	LastName  string   `json:"last_name"`
 	FirstName string   `json:"first_name"`
 	Username  string   `json:"username"`
