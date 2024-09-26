@@ -30,4 +30,5 @@ func main() {
 	accounts.PUT("/Authentication/SignOut", middlewares.IsAuthorized(), controllers.SignOut)
 	accounts.GET("/Authentication/Validate", controllers.VerifyingToken)
 	accounts.POST("/Authentication/Refresh", controllers.RefreshAccessToken)
+	accounts.GET("/Accounts/Me", middlewares.IsAuthorized(), controllers.GetInfoAboutAccount)
 }

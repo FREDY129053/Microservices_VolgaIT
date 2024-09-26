@@ -29,3 +29,5 @@ PUT http://localhost:8081/api/Authentication/SignOut
 
 
 GET http://localhost:8081/api/Authentication/Validate?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJ1c2VyIl0sInVzZXJuYW1lIjoiZnJlZHkxMjkwNTMiLCJleHAiOjE3MjczMTQzMTksInN1YiI6ImZyZWR5MTI5MDUzIn0.A-723_Uya6Xw5iyuE2VIPCjen3w7N7OjWFRZCJaiTU0
+
+GET http://localhost:8081/api/Accounts/Me

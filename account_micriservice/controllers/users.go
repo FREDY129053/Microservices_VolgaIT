@@ -63,7 +63,7 @@ func Signin(c *gin.Context) {
 
 	// Проверка на наличие пользователя
 	var existingUser models.SigninUser
-	row := databaseConn.QueryRow("SELECT username,password FROM Users WHERE username=$1", user.Username)
+	row := databaseConn.QueryRow("SELECT username,password FROM users WHERE username=$1", user.Username)
 	if err := row.Scan(&existingUser.Username, &existingUser.Password); err != nil {
 		c.JSON(400, gin.H{"message": "User does not exist"})
 		c.Abort()
@@ -153,4 +153,45 @@ func SignOut(c *gin.Context) {
 }
 
 func GetInfoAboutAccount(c *gin.Context) {
+	var userInfo models.UserInfo
+
+	cookie, err := c.Cookie("tokenAccess")
+	if err != nil {
+		c.JSON(400, gin.H{"message": "Unauthorized"})
+		c.Abort()
+		return
+	}
+
+	claims, err := helpers.ParseToken(cookie)
+	if err != nil {
+		c.JSON(400, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	}
+
+	row := databaseConn.QueryRow("SELECT * FROM Users WHERE username=$1", claims.Username)
+	if err := row.Scan(&userInfo.UUID, &userInfo.Username, &userInfo.FirstName, &userInfo.LastName, &userInfo.Password); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find user"})
+		c.Abort()
+		return
+	}
+
+	var roles []string
+	rolesRows, err := databaseConn.Query("SELECT role FROM user_and_roles WHERE user_uuid=$1", userInfo.UUID)
+	if err != nil {
+		panic(err)
+	}
+	for rolesRows.Next() {
+		var role string
+		err := rolesRows.Scan(&role)
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
+		roles = append(roles, role)
+	}
+
+	userInfo.Roles = roles
+
+	c.JSON(200, userInfo)
 }
