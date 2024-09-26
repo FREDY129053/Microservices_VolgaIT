@@ -195,3 +195,36 @@ func GetInfoAboutAccount(c *gin.Context) {
 
 	c.JSON(200, userInfo)
 }
+
+func UpdateAccount(c *gin.Context) {
+	var updateInfo models.UpdateUser
+
+	if err := c.ShouldBindJSON(&updateInfo); err != nil {
+		c.JSON(400, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	}
+
+	cookie, err := c.Cookie("tokenAccess")
+	if err != nil {
+		c.JSON(400, gin.H{"message": "Unauthorized"})
+		c.Abort()
+		return
+	}
+
+	claims, err := helpers.ParseToken(cookie)
+	if err != nil {
+		c.JSON(400, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	}
+
+	_, err = databaseConn.Exec("UPDATE users SET last_name=$1, first_name=$2, password=$3 WHERE username=$4", updateInfo.LastName, updateInfo.FirstName, updateInfo.Password, claims.Username)
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "User updated successfully"})
+}

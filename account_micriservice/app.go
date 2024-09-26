@@ -31,4 +31,5 @@ func main() {
 	accounts.GET("/Authentication/Validate", controllers.VerifyingToken)
 	accounts.POST("/Authentication/Refresh", controllers.RefreshAccessToken)
 	accounts.GET("/Accounts/Me", middlewares.IsAuthorized(), controllers.GetInfoAboutAccount)
+	accounts.PUT("/Accounts/Update", middlewares.IsAuthorized(), controllers.UpdateAccount)
 }
