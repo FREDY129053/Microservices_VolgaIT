@@ -14,8 +14,8 @@ type UserInfo struct {
 	LastName  string   `json:"last_name"`
 	FirstName string   `json:"first_name"`
 	Username  string   `json:"username"`
-	Password  string   `json:"password"`
-	Roles     []string `json:"roles"`
+	Password  string   `json:"password,omitempty"`
+	Roles     []string `json:"roles,omitempty"`
 }
 
 // Вход пользователя
@@ -29,12 +29,6 @@ type UpdateUser struct {
 	LastName  string `json:"last_name"`
 	FirstName string `json:"first_name"`
 	Password  string `json:"password"`
-}
-
-// Выборка акков
-type GetAccounts struct {
-	From  int `json:"from"`
-	Count int `json:"count"`
 }
 
 // Действия админов с акками

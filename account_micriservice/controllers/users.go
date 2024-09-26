@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -227,4 +228,44 @@ func UpdateAccount(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "User updated successfully"})
+}
+
+func GetAccounts(c *gin.Context) {
+	fromParam := c.Query("from")
+	countParam := c.Query("count")
+
+	from, err := strconv.Atoi(fromParam)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "Parameter from should be a number"})
+		c.Abort()
+		return
+	}
+
+	count, err := strconv.Atoi(countParam)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "Parameter count should be a number"})
+		c.Abort()
+		return
+	}
+
+	var users []models.UserInfo
+
+	rows, err := databaseConn.Query("SELECT * FROM users LIMIT $1 OFFSET $2", count, from-1)
+	if err != nil {
+		c.JSON(501, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	}
+
+	for rows.Next() {
+		user := models.UserInfo{}
+		err := rows.Scan(&user.UUID, &user.Username, &user.FirstName, &user.LastName, &user.Password)
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
+		users = append(users, user)
+	}
+
+	c.JSON(200, users)
 }
