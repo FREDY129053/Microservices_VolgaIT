@@ -72,3 +72,9 @@ content-Type: application/json
     "doctor"
   ]
 }
+
+DELETE http://localhost:8081/api/Accounts/6beb0d30-886f-473e-9504-f347cac58be3
+
+GET http://localhost:8081/api/Accounts/Doctors?nameFilter=Rodi&from=1&count=10
+
+GET http://localhost:8081/api/Accounts/Doctors/31ebc383-1c2f-460d-9b43-d080c3677706

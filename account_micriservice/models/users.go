@@ -41,8 +41,9 @@ type AdminAccounts struct {
 }
 
 // Выборка докторов
-type GetDoctors struct {
-	NameFilter string `json:"name_filter"`
-	From       int    `json:"from"`
-	Count      int    `json:"count"`
+type DoctorsInfo struct {
+	UUID      string `json:"uuid"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Username  string `json:"username"`
 }

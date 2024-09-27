@@ -35,4 +35,7 @@ func main() {
 	accounts.GET("/Accounts", middlewares.IsAdmin(), controllers.GetAccounts)
 	accounts.POST("/Accounts", middlewares.IsAdmin(), controllers.AddAccountByAdmin)
 	accounts.PUT("/Accounts/:uuid", middlewares.IsAdmin(), controllers.ChangeAccountByAdmin)
+	accounts.DELETE("/Accounts/:uuid", middlewares.IsAdmin(), controllers.DeleteAccountByAdmin)
+	accounts.GET("/Accounts/Doctors", middlewares.IsAuthorized(), controllers.GetAllDoctors)
+	accounts.GET("/Accounts/Doctors/:uuid", middlewares.IsAuthorized(), controllers.GetDoctor)
 }

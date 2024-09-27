@@ -347,3 +347,77 @@ func ChangeAccountByAdmin(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "User updated successfully"})
 }
+
+func DeleteAccountByAdmin(c *gin.Context) {
+	userUUID := c.Param("uuid")
+	_, err := databaseConn.Exec("DELETE FROM users WHERE uuid=$1", userUUID)
+	if err != nil {
+		c.JSON(404, gin.H{"message": "User not found"})
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "User deleted successfully"})
+}
+
+func GetAllDoctors(c *gin.Context) {
+	var allDoctors []models.DoctorsInfo
+
+	fullName := "%" + c.Query("nameFilter") +"%"
+	fromParam := c.Query("from")
+	countParam := c.Query("count")
+	from, err := strconv.Atoi(fromParam)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "Parameter from should be a number"})
+		c.Abort()
+		return
+	}
+
+	count, err := strconv.Atoi(countParam)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "Parameter count should be a number"})
+		c.Abort()
+		return
+	}
+
+	rows, err := databaseConn.Query(`
+		SELECT uuid, username, first_name, last_name 
+	 	FROM users u
+		JOIN user_and_roles uar
+		ON u.uuid = uar.user_uuid
+		WHERE uar.role = 'doctor'
+		AND (u.first_name || ' ' || u.last_name) ILIKE $1
+		OFFSET $2
+		LIMIT $3`, fullName, from-1, count)
+	if err != nil {
+		c.JSON(501, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	}
+
+	for rows.Next() {
+		doctor := models.DoctorsInfo{}
+		err := rows.Scan(&doctor.UUID, &doctor.Username, &doctor.FirstName, &doctor.LastName)
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
+		allDoctors = append(allDoctors, doctor)
+	}
+
+	c.JSON(200, allDoctors)
+}
+
+func GetDoctor(c *gin.Context) {
+	var doctor models.DoctorsInfo
+	userUUID := c.Param("uuid")
+
+	row := databaseConn.QueryRow("SELECT uuid, username, first_name, password FROM Users WHERE uuid=$1", userUUID)
+	if err := row.Scan(&doctor.UUID, &doctor.Username, &doctor.FirstName, &doctor.LastName); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find doctor"})
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, doctor)
+}
