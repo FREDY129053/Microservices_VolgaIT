@@ -33,4 +33,6 @@ func main() {
 	accounts.GET("/Accounts/Me", middlewares.IsAuthorized(), controllers.GetInfoAboutAccount)
 	accounts.PUT("/Accounts/Update", middlewares.IsAuthorized(), controllers.UpdateAccount)
 	accounts.GET("/Accounts", middlewares.IsAdmin(), controllers.GetAccounts)
+	accounts.POST("/Accounts", middlewares.IsAdmin(), controllers.AddAccountByAdmin)
+	accounts.PUT("/Accounts/:uuid", middlewares.IsAdmin(), controllers.ChangeAccountByAdmin)
 }

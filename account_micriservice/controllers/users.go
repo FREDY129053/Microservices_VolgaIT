@@ -37,14 +37,15 @@ func Signup(c *gin.Context) {
 
 	// Вставка пользователя и его роли в БД
 	userUUID := helpers.GenerateUUID()
-	_, err := databaseConn.Exec("INSERT INTO user_and_roles (user_uuid) VALUES ($1)", userUUID)
-	if err != nil {
+	_, err2 := databaseConn.Exec("INSERT INTO users (uuid, username, first_name, last_name, password) VALUES($1, $2, $3, $4, $5)", userUUID, user.Username, user.FirstName, user.LastName, user.Password)
+	if err2 != nil {
 		c.JSON(500, gin.H{"message": "Cannot create user"})
 		c.Abort()
 		return
 	}
-	_, err2 := databaseConn.Exec("INSERT INTO users (uuid, username, first_name, last_name, password) VALUES($1, $2, $3, $4, $5)", userUUID, user.Username, user.FirstName, user.LastName, user.Password)
-	if err2 != nil {
+
+	_, err := databaseConn.Exec("INSERT INTO user_and_roles (user_uuid) VALUES ($1)", userUUID)
+	if err != nil {
 		c.JSON(500, gin.H{"message": "Cannot create user"})
 		c.Abort()
 		return
@@ -268,4 +269,81 @@ func GetAccounts(c *gin.Context) {
 	}
 
 	c.JSON(200, users)
+}
+
+func AddAccountByAdmin(c *gin.Context) {
+	var accountInfo models.AdminAccounts
+
+	if err := c.ShouldBindJSON(&accountInfo); err != nil {
+		c.JSON(400, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	}
+
+	// Проверка на наличие пользователя в БД
+	var existingUser models.SigninUser
+	row := databaseConn.QueryRow("SELECT username,password FROM Users WHERE username=$1", accountInfo.Username)
+	if err := row.Scan(&existingUser.Username, &existingUser.Password); err == nil {
+		c.JSON(400, gin.H{"message": "User already exists"})
+		c.Abort()
+		return
+	}
+
+	userUUID := helpers.GenerateUUID()
+	_, err2 := databaseConn.Exec("INSERT INTO users (uuid, username, first_name, last_name, password) VALUES($1, $2, $3, $4, $5)", userUUID, accountInfo.Username, accountInfo.FirstName, accountInfo.LastName, accountInfo.Password)
+	if err2 != nil {
+		c.JSON(500, gin.H{"message": err2.Error()})
+		c.Abort()
+		return
+	}
+	for _, role := range accountInfo.Roles {
+		_, err := databaseConn.Exec("INSERT INTO user_and_roles (user_uuid, role) VALUES ($1, $2)", userUUID, role)
+		if err != nil {
+			c.JSON(500, gin.H{"message": err.Error()})
+			c.Abort()
+			return
+		}
+	}
+
+	c.JSON(200, gin.H{"message": "User created successfully"})
+}
+
+func ChangeAccountByAdmin(c *gin.Context) {
+	var accountInfo models.AdminAccounts
+	userUUID := c.Param("uuid")
+
+	if err := c.ShouldBindJSON(&accountInfo); err != nil {
+		c.JSON(400, gin.H{"message": err.Error()})
+		c.Abort()
+		return
+	} 
+
+	// Для начала удалим все роли у пользователя в БД
+	_, err := databaseConn.Exec("DELETE FROM user_and_roles WHERE user_uuid=$1", userUUID)
+	if err != nil {
+		c.JSON(404, gin.H{"message": "User not found"})
+		c.Abort()
+		return
+	}
+
+	// Вставка ролей и изменение данных
+	_, err2 := databaseConn.Exec("UPDATE users SET username=$1, first_name=$2, last_name=$3, password=$4 WHERE uuid=$5", accountInfo.Username, accountInfo.FirstName, accountInfo.LastName, accountInfo.Password, userUUID)
+	if err2 != nil {
+		log.Println(userUUID)
+		c.JSON(500, gin.H{"message": err2.Error()})
+		c.Abort()
+		return
+	}
+
+	for _, role := range accountInfo.Roles {
+		_, err := databaseConn.Exec("INSERT INTO user_and_roles (user_uuid, role) VALUES ($1, $2)", userUUID, role)
+		if err != nil {
+			log.Println("????")
+			c.JSON(500, gin.H{"message": err.Error()})
+			c.Abort()
+			return
+		}
+	}
+
+	c.JSON(200, gin.H{"message": "User updated successfully"})
 }

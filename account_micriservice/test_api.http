@@ -2,9 +2,9 @@ POST http://localhost:8081/api/Authentication/SignUp
 content-Type: application/json
 
 {
-  "last_name": "Adminov",
-  "first_name": "Admin",
-  "username": "admin",
+  "last_name": "Userov",
+  "first_name": "Hach",
+  "username": "user",
   "password": "12345"
 }
 
@@ -12,8 +12,8 @@ POST http://localhost:8081/api/Authentication/SignIn
 content-Type: application/json
 
 {
-  "username": "admin",
-  "password": "12345"
+  "username": "unknown",
+  "password": "1122333"
 }
 
 
@@ -44,3 +44,31 @@ content-Type: application/json
 }
 
 GET http://localhost:8081/api/Accounts?from=1&count=10
+
+POST http://localhost:8081/api/Accounts
+content-Type: application/json
+
+{
+  "first_name": "Rodion",
+  "last_name": "Ok",
+  "username": "unknown",
+  "password": "1122333",
+  "roles": [
+    "admin",
+    "doctor"
+  ]
+}
+
+PUT http://localhost:8081/api/Accounts/d61f91c3-d3bf-4b34-9894-e21bfa277ca4
+content-Type: application/json
+
+{
+  "first_name": "Rodion",
+  "last_name": "Ok",
+  "username": "Fredy@129053",
+  "password": "1122333",
+  "roles": [
+    "manager",
+    "doctor"
+  ]
+}
