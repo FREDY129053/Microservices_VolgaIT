@@ -1,0 +1,39 @@
+GET http://localhost:8082/api/Hospitals?from=1&count=10
+
+
+GET http://localhost:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692
+
+
+GET http://localhost:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692/Rooms
+
+
+
+POST http://localhost:8082/api/Hospitals
+content-Type: application/json
+
+{
+  "name": "Городская №1",
+  "address": "Ул. Выселковая 7А",
+  "contact_phone": "88005553555",
+  "rooms": [
+    "Офтальмолог",
+    "Венеролог",
+    "Психиатр"
+  ]
+}
+
+PUT http://localhost:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692
+content-Type: application/json
+
+{
+  "name": "Городская №1",
+  "address": "Ул. Выселковая 7А",
+  "contact_phone": "+8(800)555-35-55",
+  "rooms": [
+    "Офтальмолог",
+    "Венеролог",
+    "Психиатр"
+  ]
+}
+
+DELETE http://localhost:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692

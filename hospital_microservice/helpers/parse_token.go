@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"account_microservice/models"
+	"hospital_microservice/models"
 	"os"
 	"time"
 
@@ -21,6 +21,7 @@ func ParseToken(tokenStr string) (claims *models.Claims, err error) {
 	if !ok {
 		return nil, err
 	}
+	
 	if time.Until(time.Unix(claims.ExpiresAt, 0)) < 0 {
 		return nil, err
 	}

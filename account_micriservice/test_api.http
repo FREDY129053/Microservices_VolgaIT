@@ -2,18 +2,18 @@ POST http://localhost:8081/api/Authentication/SignUp
 content-Type: application/json
 
 {
-  "last_name": "Userov",
-  "first_name": "Hach",
-  "username": "user",
-  "password": "12345"
+  "last_name": "Adminov",
+  "first_name": "Admin",
+  "username": "admin",
+  "password": "admin"
 }
 
 POST http://localhost:8081/api/Authentication/SignIn
 content-Type: application/json
 
 {
-  "username": "unknown",
-  "password": "1122333"
+  "username": "admin",
+  "password": "admin"
 }
 
 
@@ -21,7 +21,7 @@ POST http://localhost:8081/api/Authentication/Refresh
 content-Type: application/json
 
 {
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJ1c2VyIl0sInVzZXJuYW1lIjoiZnJlZHkxMjkwNTMiLCJleHAiOjE3MjczMzIwMTksInN1YiI6ImZyZWR5MTI5MDUzIn0.uxsov5CdqxaetWo898tMUEjb8rBuzPmZMQ9mPsmz5Ws"
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzI3NTMwMzA0LCJzdWIiOiJhZG1pbiJ9.NUdy3c5zSdvFL8yh_w1sXLn8HOA0qIlEGSbk3eVaz1Y"
 }
 
 
@@ -49,13 +49,12 @@ POST http://localhost:8081/api/Accounts
 content-Type: application/json
 
 {
-  "first_name": "Rodion",
-  "last_name": "Ok",
-  "username": "unknown",
-  "password": "1122333",
+  "first_name": "User",
+  "last_name": "Userov",
+  "username": "user",
+  "password": "user",
   "roles": [
-    "admin",
-    "doctor"
+    "user"
   ]
 }
 
