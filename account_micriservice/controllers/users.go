@@ -412,8 +412,11 @@ func GetDoctor(c *gin.Context) {
 	var doctor models.DoctorsInfo
 	userUUID := c.Param("uuid")
 
+	log.Printf("UUID = %s\n", userUUID)
+
 	row := databaseConn.QueryRow("SELECT uuid, username, first_name, password FROM Users WHERE uuid=$1", userUUID)
 	if err := row.Scan(&doctor.UUID, &doctor.Username, &doctor.FirstName, &doctor.LastName); err != nil {
+		log.Printf("Error here = %s\n", err.Error())
 		c.JSON(400, gin.H{"message": "Cannot find doctor"})
 		c.Abort()
 		return

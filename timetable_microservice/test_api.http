@@ -1,0 +1,34 @@
+POST http://localhost:8083/api/Timetable
+content-Type: application/json
+
+{
+  "hospital_uuid": "e95c1537-2e4b-4590-9fea-a485efd480b3",
+  "doctor_uuid": "1a149dc8-4f38-41fb-aedd-04ed04b0b88b",
+  "from": "2024-09-28T09:00:00Z",
+  "to": "2024-09-28T15:00:00Z",
+  "room": "Венеролог"
+}
+
+PUT http://localhost:8083/api/Timetable/1
+content-Type: application/json
+
+{
+  "hospital_uuid": "e95c1537-2e4b-4590-9fea-a485efd480b3",
+  "doctor_uuid": "1a149dc8-4f38-41fb-aedd-04ed04b0b88b",
+  "from": "2024-09-28T09:00:00Z",
+  "to": "2024-09-28T15:00:00Z",
+  "room": "Психиатр"
+}
+
+DELETE http://localhost:8083/api/Timetable/4
+
+DELETE http://localhost:8083/api/Timetable/Doctor/1a149dc8-4f38-41fb-aedd-04ed04b0b88b
+
+DELETE http://localhost:8083/api/Timetable/Hospital/-2e4b-4590-9fea-a485efd480b3
+
+
+GET http://localhost:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
+
+GET http://localhost:8083/api/Timetable/Doctor/1a149dc8-4f38-41fb-aedd-04ed04b0b88b?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
+
+GET http://localhost:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3/Room/Психиатр?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z

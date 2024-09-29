@@ -2,10 +2,10 @@ POST http://localhost:8081/api/Authentication/SignUp
 content-Type: application/json
 
 {
-  "last_name": "Adminov",
-  "first_name": "Admin",
-  "username": "admin",
-  "password": "admin"
+  "last_name": "Doctorov",
+  "first_name": "Doctor",
+  "username": "doctor",
+  "password": "doctor"
 }
 
 POST http://localhost:8081/api/Authentication/SignIn
@@ -49,12 +49,12 @@ POST http://localhost:8081/api/Accounts
 content-Type: application/json
 
 {
-  "first_name": "User",
-  "last_name": "Userov",
-  "username": "user",
-  "password": "user",
+  "first_name": "Doctor",
+  "last_name": "Doctor",
+  "username": "doctor",
+  "password": "doctor",
   "roles": [
-    "user"
+    "doctor"
   ]
 }
 
@@ -72,8 +72,8 @@ content-Type: application/json
   ]
 }
 
-DELETE http://localhost:8081/api/Accounts/6beb0d30-886f-473e-9504-f347cac58be3
+DELETE http://localhost:8081/api/Accounts/3072082b-7339-4fc0-8194-5d9b8e1a5d86
 
-GET http://localhost:8081/api/Accounts/Doctors?nameFilter=Rodi&from=1&count=10
+GET http://localhost:8081/api/Accounts/Doctors?nameFilter=&from=1&count=10
 
-GET http://localhost:8081/api/Accounts/Doctors/31ebc383-1c2f-460d-9b43-d080c3677706
+GET http://localhost:8081/api/Accounts/Doctors/24c076df-b230-43ea-99ab-04942c50e859

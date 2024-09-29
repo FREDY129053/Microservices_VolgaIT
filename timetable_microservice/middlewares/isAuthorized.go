@@ -1,8 +1,7 @@
 package middlewares
 
 import (
-	"account_microservice/helpers"
-
+	"timetable_microservice/helpers"
 	"github.com/gin-gonic/gin"
 )
 
