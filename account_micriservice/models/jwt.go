@@ -8,7 +8,3 @@ type Claims struct {
 	Username string `json:"username"`
 	jwt.StandardClaims
 }
-
-type RefreshToken struct {
-	RefreshToken string `json:"refresh_token"`
-}

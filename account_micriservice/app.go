@@ -29,7 +29,7 @@ func main() {
 	accounts.POST("/Authentication/SignIn", controllers.Signin)
 	accounts.PUT("/Authentication/SignOut", middlewares.IsAuthorized(), controllers.SignOut)
 	accounts.GET("/Authentication/Validate", controllers.VerifyingToken)
-	accounts.POST("/Authentication/Refresh", controllers.RefreshAccessToken)
+	accounts.PUT("/Authentication/Refresh", controllers.RefreshAccessToken)
 	accounts.GET("/Accounts/Me", middlewares.IsAuthorized(), controllers.GetInfoAboutAccount)
 	accounts.PUT("/Accounts/Update", middlewares.IsAuthorized(), controllers.UpdateAccount)
 	accounts.GET("/Accounts", middlewares.IsAdmin(), controllers.GetAccounts)

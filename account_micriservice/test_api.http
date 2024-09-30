@@ -12,18 +12,12 @@ POST http://localhost:8081/api/Authentication/SignIn
 content-Type: application/json
 
 {
-  "username": "doctor",
-  "password": "doctor"
+  "username": "admin",
+  "password": "admin"
 }
 
 
-POST http://localhost:8081/api/Authentication/Refresh
-content-Type: application/json
-
-{
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzI3NTMwMzA0LCJzdWIiOiJhZG1pbiJ9.NUdy3c5zSdvFL8yh_w1sXLn8HOA0qIlEGSbk3eVaz1Y"
-}
-
+PUT http://localhost:8081/api/Authentication/Refresh
 
 PUT http://localhost:8081/api/Authentication/SignOut
 

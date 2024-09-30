@@ -24,16 +24,14 @@ func VerifyingToken(c *gin.Context) {
 }
 
 func RefreshAccessToken(c *gin.Context) {
-	var refreshToken models.RefreshToken
-	if err := c.ShouldBindJSON(&refreshToken); err != nil {
-		log.Println("HERE")
-		c.JSON(400, gin.H{"message": err.Error()})
-		c.Abort()
+	refreshToken, err := c.Cookie("tokenRefresh")
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 	
 
-	claims, err := helpers.ParseToken(refreshToken.RefreshToken)
+	claims, err := helpers.ParseToken(refreshToken)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		c.Abort()
