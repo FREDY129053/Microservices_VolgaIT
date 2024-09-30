@@ -12,8 +12,8 @@ POST http://localhost:8081/api/Authentication/SignIn
 content-Type: application/json
 
 {
-  "username": "admin",
-  "password": "admin"
+  "username": "doctor",
+  "password": "doctor"
 }
 
 
@@ -76,4 +76,4 @@ DELETE http://localhost:8081/api/Accounts/3072082b-7339-4fc0-8194-5d9b8e1a5d86
 
 GET http://localhost:8081/api/Accounts/Doctors?nameFilter=&from=1&count=10
 
-GET http://localhost:8081/api/Accounts/Doctors/24c076df-b230-43ea-99ab-04942c50e859
+GET http://localhost:8081/api/Accounts/Doctors/1a149dc8-4f38-41fb-aedd-04ed04b0b88b
