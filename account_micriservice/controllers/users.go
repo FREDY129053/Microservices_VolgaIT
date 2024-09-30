@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 	"strconv"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -101,7 +102,7 @@ func Signin(c *gin.Context) {
 			log.Println(err.Error())
 			continue
 		}
-		roles = append(roles, role)
+		roles = append(roles, strings.ToLower(role))
 	}
 
 	// Создание токена на 5 минут
