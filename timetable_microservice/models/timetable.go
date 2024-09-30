@@ -16,3 +16,7 @@ type FullTimetable struct {
 	ID int `json:"uuid"`
 	Timetable
 }
+
+type AppointmentTime struct {
+	Time time.Time `json:"time"`
+}

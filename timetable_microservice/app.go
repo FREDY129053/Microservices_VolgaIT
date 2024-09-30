@@ -33,7 +33,7 @@ func main() {
 	hospitals.GET("/Timetable/Hospital/:uuid", middlewares.IsAuthorized(), controllers.GetByHospitalUUID)
 	hospitals.GET("/Timetable/Doctor/:uuid", middlewares.IsAuthorized(), controllers.GetByDoctorUUID)
 	hospitals.GET("/Timetable/Hospital/:uuid/Room/:room", middlewares.IsAdminOrManagerOrDoctor(), controllers.GetByHospitalUUIDAndRoom)
-	// hospitals.GET("/Timetable/:id/Appointments", middlewares.IsAuthorized(), controllers.GetAllHospitals)
-	// hospitals.POST("/Timetable/:id/Appointments", middlewares.IsAuthorized(), controllers.GetAllHospitals)
-	// hospitals.DELETE("/Timetable/Appointments/:id", middlewares.IsAuthorized(), controllers.GetAllHospitals)
+	hospitals.GET("/Timetable/:id/Appointments", middlewares.IsAuthorized(), controllers.GetAppointments)
+	hospitals.POST("/Timetable/:id/Appointments", middlewares.IsAuthorized(), controllers.MakeAnAppointment)
+	hospitals.DELETE("/Appointment/:id", middlewares.IsAdminOrManagerOrPatient(), controllers.DeleteAppointment)
 }

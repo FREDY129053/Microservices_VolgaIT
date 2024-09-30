@@ -32,3 +32,14 @@ GET http://localhost:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd
 GET http://localhost:8083/api/Timetable/Doctor/1a149dc8-4f38-41fb-aedd-04ed04b0b88b?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
 
 GET http://localhost:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3/Room/Психиатр?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
+
+GET http://localhost:8083/api/Timetable/7/Appointments
+
+POST http://localhost:8083/api/Timetable/7/Appointments
+content-Type: application/json
+
+{
+  "time": "2024-09-28T19:00:00+10:00"
+}
+
+DELETE http://localhost:8083/api/Appointment/1

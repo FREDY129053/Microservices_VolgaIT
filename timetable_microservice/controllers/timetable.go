@@ -1,14 +1,15 @@
 package controllers
 
 import (
-	"time"
 	"fmt"
-	"net/http"
 	"io"
 	"log"
+	"net/http"
 	"strconv"
 	"strings"
+	"time"
 	"timetable_microservice/database"
+	"timetable_microservice/helpers"
 	"timetable_microservice/models"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,7 @@ func _IsParamsValid(from, to string) bool {
 	}
 
 	_, err2 := time.Parse(iso8601Layout, to)
-	
+
 	return err2 == nil 
 }
 
@@ -421,4 +422,124 @@ func GetByHospitalUUIDAndRoom(c *gin.Context) {
 	}
 
 	c.JSON(200, allNotes)
+}
+
+func GetAppointments(c *gin.Context) {
+	timetableIDParam := c.Param("id")
+	// Проверка параметров
+	timetableID, err := strconv.Atoi(timetableIDParam)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "parameter id should be a number"})
+		c.Abort()
+		return
+	}
+
+	var from, to time.Time
+	row := databaseConn.QueryRow("SELECT time_from, time_to FROM timetable WHERE id=$1", timetableID)
+	if err := row.Scan(&from, &to); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find timetable note"})
+		c.Abort()
+		return
+	}
+
+	// Рассчет слотов
+	var slots []time.Time
+	for t := from; t.Before(to); t = t.Add(30 * time.Minute) {
+		slots = append(slots, t)
+	}
+
+	if len(slots) == 0 {
+		c.JSON(200, gin.H{"message": "no slots available"})
+		return
+	}
+
+	c.JSON(200, gin.H{"slots": slots})
+}
+
+func MakeAnAppointment(c *gin.Context) {
+	var appointmentTime models.AppointmentTime
+
+	if err := c.ShouldBindJSON(&appointmentTime); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := c.Cookie("tokenAccess")
+	if err != nil {
+		c.JSON(400, gin.H{"message": err.Error()})
+		return
+	}
+
+	claims, err := helpers.ParseToken(token)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	timetableIDParam := c.Param("id")
+	// Проверка параметров
+	timetableID, err := strconv.Atoi(timetableIDParam)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "parameter id should be a number"})
+		c.Abort()
+		return
+	}
+
+	// Проверка на существование времени в записях
+	var id int
+	row := databaseConn.QueryRow(`
+		SELECT id 
+		FROM appointments 
+		WHERE time=$1`, appointmentTime.Time)
+	if err := row.Scan(&id); err == nil {
+		c.JSON(400, gin.H{"message": "Cannot make an appointment. Choose another slot"})
+		return
+	}
+
+	// Занесение записи
+	_, err = databaseConn.Exec(`
+		INSERT INTO appointments(timetable_id, pacient_username, time)
+		VALUES($1, $2, $3)
+	`, timetableID, claims.Username, appointmentTime.Time)
+
+	if err != nil {
+		c.JSON(501, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Выдача ID записи на прием
+	var appointmentID int
+	row = databaseConn.QueryRow(`
+		SELECT id 
+		FROM appointments 
+		WHERE timetable_id=$1 
+		AND pacient_username=$2
+		AND time=$3`, timetableID, claims.Username, appointmentTime.Time)
+	if err := row.Scan(&appointmentID); err != nil {
+		c.JSON(502, gin.H{"message": "Cannot find appointment note"})
+		return
+	}
+
+	text := fmt.Sprintf("you have successfully made an appointment. Record ID = %d", appointmentID)
+	c.JSON(200, gin.H{"message": text})
+}
+
+func DeleteAppointment(c *gin.Context) {
+	appointmentIDParam := c.Param("id")
+	// Проверка параметров
+	appointmentID, err := strconv.Atoi(appointmentIDParam)
+	if err != nil {
+		c.JSON(400, gin.H{"message": "parameter id should be a number"})
+		c.Abort()
+		return
+	}
+
+	_, err = databaseConn.Exec("DELETE FROM appointments WHERE id=$1", appointmentID)
+	if err != nil {
+		c.JSON(404, gin.H{"message": "appointment not found"})
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "appointment deleted successfully"})
 }

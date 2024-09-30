@@ -27,7 +27,7 @@ func IsAdminOrManagerOrDoctor() gin.HandlerFunc {
 
 		if !(slices.Contains(claims.Roles, "admin") ||
 				slices.Contains(claims.Roles, "manager") ||
-				slices.Contains(claims.Roles, "third_role")) {
+				slices.Contains(claims.Roles, "doctor")) {
 			c.JSON(401, gin.H{"error": "not allowed"})
 			c.Abort()
 			return
