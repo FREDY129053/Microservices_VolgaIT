@@ -218,6 +218,15 @@ func UpdateHospital(c *gin.Context) {
 
 func DeleteHospital(c *gin.Context) {
 	hospitalUUID := c.Param("uuid")
+
+	var dbInfo string
+	row := databaseConn.QueryRow("SELECT name FROM hospital WHERE uuid=$1", hospitalUUID)
+	if err := row.Scan(&dbInfo); err != nil {
+		c.JSON(400, gin.H{"message": "oi, cannot find hospital"})
+		c.Abort()
+		return
+	}
+
 	_, err := databaseConn.Exec("DELETE FROM hospital WHERE uuid=$1", hospitalUUID)
 	if err != nil {
 		c.JSON(404, gin.H{"message": "Oi, hospital not found"})

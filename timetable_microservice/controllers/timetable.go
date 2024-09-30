@@ -257,6 +257,13 @@ func DeleteByID(c *gin.Context) {
 		return
 	}
 
+	var dbInfo string
+	row := databaseConn.QueryRow("SELECT room FROM timetable WHERE id=$1", id)
+	if err := row.Scan(&dbInfo); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find note"})
+		c.Abort()
+		return
+	}
 	_, err = databaseConn.Exec("DELETE FROM timetable WHERE id=$1", id)
 	if err != nil {
 		c.JSON(404, gin.H{"message": "note not found"})
@@ -270,6 +277,14 @@ func DeleteByID(c *gin.Context) {
 func DeleteByDoctorID(c *gin.Context) {
 	uuidParam := c.Param("uuid")
 
+	var dbInfo string
+	row := databaseConn.QueryRow("SELECT room FROM timetable WHERE doctor_uuid=$1", uuidParam)
+	if err := row.Scan(&dbInfo); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find doctor's note"})
+		c.Abort()
+		return
+	}
+
 	_, err := databaseConn.Exec("DELETE FROM timetable WHERE doctor_uuid=$1", uuidParam)
 	if err != nil {
 		c.JSON(404, gin.H{"message": "note not found"})
@@ -282,6 +297,14 @@ func DeleteByDoctorID(c *gin.Context) {
 
 func DeleteByHospitalID(c *gin.Context) {
 	uuidParam := c.Param("uuid")
+
+	var dbInfo string
+	row := databaseConn.QueryRow("SELECT room FROM timetable WHERE hospital_uuid=$1", uuidParam)
+	if err := row.Scan(&dbInfo); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find hospital's note"})
+		c.Abort()
+		return
+	}
 
 	_, err := databaseConn.Exec("DELETE FROM timetable WHERE hospital_uuid=$1", uuidParam)
 	if err != nil {
@@ -530,6 +553,14 @@ func DeleteAppointment(c *gin.Context) {
 	appointmentID, err := strconv.Atoi(appointmentIDParam)
 	if err != nil {
 		c.JSON(400, gin.H{"message": "parameter id should be a number"})
+		c.Abort()
+		return
+	}
+
+	var dbInfo string
+	row := databaseConn.QueryRow("SELECT pacient_username FROM appointments WHERE id=$1", appointmentID)
+	if err := row.Scan(&dbInfo); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find appointment"})
 		c.Abort()
 		return
 	}

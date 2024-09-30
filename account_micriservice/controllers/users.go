@@ -372,6 +372,15 @@ func ChangeAccountByAdmin(c *gin.Context) {
 
 func DeleteAccountByAdmin(c *gin.Context) {
 	userUUID := c.Param("uuid")
+
+	var dbInfo string
+	row := databaseConn.QueryRow("SELECT username FROM Users WHERE uuid=$1", userUUID)
+	if err := row.Scan(&dbInfo); err != nil {
+		c.JSON(400, gin.H{"message": "Cannot find user"})
+		c.Abort()
+		return
+	}
+
 	_, err := databaseConn.Exec("DELETE FROM users WHERE uuid=$1", userUUID)
 	if err != nil {
 		c.JSON(404, gin.H{"message": "User not found"})
