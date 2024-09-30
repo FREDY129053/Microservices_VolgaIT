@@ -265,6 +265,27 @@ func GetAccounts(c *gin.Context) {
 			log.Println(err.Error())
 			continue
 		}
+
+		// Получение ролей
+		var roles []string
+		rows, err := databaseConn.Query("SELECT role FROM user_and_roles WHERE user_uuid=$1", user.UUID)
+		if err != nil {
+			c.JSON(501, gin.H{"message": err.Error()})
+			c.Abort()
+			return
+		}
+		// Добавляем роли в массив
+		for rows.Next() {
+			var role string
+			err := rows.Scan(&role)
+			if err != nil {
+				log.Println(err.Error())
+				continue
+			}
+			roles = append(roles, role)
+		}
+
+		user.Roles = roles
 		users = append(users, user)
 	}
 
