@@ -16,6 +16,7 @@ import (
 )
 
 var databaseConn = database.GetConnection()
+
 const iso8601Layout = "2006-01-02T15:04:05Z07:00"
 
 // Проверка времени в Get-ах
@@ -27,15 +28,15 @@ func _IsParamsValid(from, to string) bool {
 
 	_, err2 := time.Parse(iso8601Layout, to)
 
-	return err2 == nil 
+	return err2 == nil
 }
 
 // Проверки временных промежутков
 func _TimeValidate(from, to time.Time) error {
-	if from.Minute() % 30 != 0 || from.Second() != 0 {
+	if from.Minute()%30 != 0 || from.Second() != 0 {
 		return fmt.Errorf("invalid format for date 'from'")
 	}
-	if to.Minute() % 30 != 0 || to.Second() != 0 {
+	if to.Minute()%30 != 0 || to.Second() != 0 {
 		return fmt.Errorf("invalid format for date 'to'")
 	}
 	if to.Before(from) {
@@ -58,7 +59,7 @@ func _IsHospitalExist(uuid, token string) bool {
 
 	// Задаем куки с токеном
 	req.AddCookie(&http.Cookie{
-		Name: "tokenAccess",
+		Name:  "tokenAccess",
 		Value: token,
 	})
 
@@ -81,7 +82,7 @@ func _IsDoctorExist(uuid, token string) bool {
 
 	// Задаем куки с токеном
 	req.AddCookie(&http.Cookie{
-		Name: "tokenAccess",
+		Name:  "tokenAccess",
 		Value: token,
 	})
 
@@ -104,7 +105,7 @@ func _IsRoomExist(hospitalUUID, token, room string) bool {
 
 	// Задаем куки с токеном
 	req.AddCookie(&http.Cookie{
-		Name: "tokenAccess",
+		Name:  "tokenAccess",
 		Value: token,
 	})
 
@@ -114,8 +115,6 @@ func _IsRoomExist(hospitalUUID, token, room string) bool {
 		return false
 	}
 	defer resp.Body.Close()
-
-
 
 	if resp.StatusCode != 200 {
 		return false
@@ -129,7 +128,20 @@ func _IsRoomExist(hospitalUUID, token, room string) bool {
 	return strings.Contains(string(body), room)
 }
 
-
+// AddNewNote godoc
+// AddNewNote добавляет новую запись в расписание
+// @Summary Добавление новой записи в расписание
+// @Description Добавление новой записи в расписание с определенной больницей и доктором. Только админы и менеджеры
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param timetable body models.Timetable true "Информация о записи"
+// @Success 200 {object} map[string]string "message": "note added successfully"
+// @Failure 400 {object} map[string]string "message": "invalid request"
+// @Failure 404 {object} map[string]string "message": "hospital/doctor/room not found"
+// @Failure 500 {object} map[string]string "message": "internal server error"
+// @Router /Timetable [post]
+// @Security ApiKeyAuth
 func AddNewNote(c *gin.Context) {
 	var noteInfo models.Timetable
 
@@ -148,7 +160,7 @@ func AddNewNote(c *gin.Context) {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
-	
+
 	if !_IsHospitalExist(noteInfo.HospitalUUID, token) {
 		c.JSON(404, gin.H{"message": "hospital not found"})
 		return
@@ -177,6 +189,21 @@ func AddNewNote(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "note added successfully"})
 }
 
+// UpdateNote godoc
+// UpdateNote обновляет запись в расписании по id
+// @Summary Обновление записи в расписании по ID
+// @Description Обновление конкретной и созданной записи в расписании по ID. Только админы и менеджеры. Нельзя изменить если есть записавшиеся
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param id path string true "ID записи"
+// @Param timetable body models.Timetable true "Информация о записи"
+// @Success 200 {object} map[string]string "message": "note updated successfully"
+// @Failure 400 {object} map[string]string "message": "invalid request"
+// @Failure 404 {object} map[string]string "message": "hospital/doctor/room not found"
+// @Failure 500 {object} map[string]string "message": "internal server error"
+// @Router /Timetable/{id} [put]
+// @Security ApiKeyAuth
 func UpdateNote(c *gin.Context) {
 	var noteInfo models.Timetable
 	idParam := c.Param("id")
@@ -204,7 +231,7 @@ func UpdateNote(c *gin.Context) {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
-	
+
 	if !_IsHospitalExist(noteInfo.HospitalUUID, token) {
 		c.JSON(404, gin.H{"message": "hospital not found"})
 		return
@@ -246,6 +273,19 @@ func UpdateNote(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "note updated successfully"})
 }
 
+// DeleteNoteByID godoc
+// DeleteNoteByID удаляет запись в расписании по id
+// @Summary Удаление записи в расписании по ID
+// @Description Удаление конкретной и созданной записи в расписании по ID. Только админы и менеджеры
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param id path string true "ID записи"
+// @Success 200 {object} map[string]string "message": "note deleted successfully"
+// @Failure 400 {object} map[string]string "message": "invalid request"
+// @Failure 404 {object} map[string]string "message": "note not found"
+// @Router /Timetable/{id} [delete]
+// @Security ApiKeyAuth
 func DeleteByID(c *gin.Context) {
 	idParam := c.Param("id")
 
@@ -274,6 +314,20 @@ func DeleteByID(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "note deleted successfully"})
 }
 
+
+// DeleteNoteByDoctorUUID godoc
+// DeleteNoteByDoctorUUID удаляет запись в расписании по uuid доктора
+// @Summary Удаление записей в расписании по UUID доктора
+// @Description Удаление созданных записей в расписании по UUID доктора. Только админы и менеджеры
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID доктора"
+// @Success 200 {object} map[string]string "message": "note deleted successfully"
+// @Failure 400 {object} map[string]string "message": "Cannot find doctor's note"
+// @Failure 404 {object} map[string]string "message": "note not found"
+// @Router /Timetable/Doctor/{uuid} [delete]
+// @Security ApiKeyAuth
 func DeleteByDoctorID(c *gin.Context) {
 	uuidParam := c.Param("uuid")
 
@@ -295,13 +349,26 @@ func DeleteByDoctorID(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "note deleted successfully"})
 }
 
+
+// DeleteNoteByHospitalUUID godoc
+// DeleteNoteByHospitalUUID удаляет запись в расписании по uuid больницы
+// @Summary Удаление записей в расписании по UUID больницы
+// @Description Удаление созданных записей в расписании по UUID больницы. Только админы и менеджеры
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID больницы"
+// @Success 200 {object} map[string]string "message": "note deleted successfully"
+// @Failure 404 {object} map[string]string "message": "Cannot find hospital's note/Note not found"
+// @Router /Timetable/Hospital/{uuid} [delete]
+// @Security ApiKeyAuth
 func DeleteByHospitalID(c *gin.Context) {
 	uuidParam := c.Param("uuid")
 
 	var dbInfo string
 	row := databaseConn.QueryRow("SELECT room FROM timetable WHERE hospital_uuid=$1", uuidParam)
 	if err := row.Scan(&dbInfo); err != nil {
-		c.JSON(400, gin.H{"message": "Cannot find hospital's note"})
+		c.JSON(404, gin.H{"message": "Cannot find hospital's note"})
 		c.Abort()
 		return
 	}
@@ -316,6 +383,23 @@ func DeleteByHospitalID(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "note deleted successfully"})
 }
 
+
+// GetTimetableByHospitalUUID godoc
+// GetTimetableByHospitalUUID получение расписания больницы по uuid 
+// @Summary Получение расписания больницы по UUID
+// @Description Получение расписания больницы по UUID в конкретные временные промежутки. Только авторизованные пользователи
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID больницы"
+// @Param from query string false "Start date filter (ISO8601)" Format(date-time)
+// @Param to query string false "End date filter (ISO8601)" Format(date-time)
+// @Success 200 {array} models.FullTimetable
+// @Failure 400 {object} map[string]string "Invalid parameters or missing token"
+// @Failure 404 {object} map[string]string "Hospital not found"
+// @Failure 501 {object} map[string]string "Database query error"
+// @Router /Timetable/Hospital/{uuid} [get]
+// @Security ApiKeyAuth
 func GetByHospitalUUID(c *gin.Context) {
 	var allNotes []models.FullTimetable
 	uuid := c.Param("uuid")
@@ -356,6 +440,23 @@ func GetByHospitalUUID(c *gin.Context) {
 	c.JSON(200, allNotes)
 }
 
+
+// GetTimetableByDoctorUUID godoc
+// GetTimetableByDoctorUUID получение расписания доктора по uuid 
+// @Summary Получение расписания доктора по UUID
+// @Description Получение расписания доктора по UUID в конкретные временные промежутки. Только авторизованные пользователи
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID доктора"
+// @Param from query string false "Start date filter (ISO8601)" Format(date-time)
+// @Param to query string false "End date filter (ISO8601)" Format(date-time)
+// @Success 200 {array} models.FullTimetable
+// @Failure 400 {object} map[string]string "Invalid parameters or missing token"
+// @Failure 404 {object} map[string]string "Doctor not found"
+// @Failure 501 {object} map[string]string "Database query error"
+// @Router /Timetable/Doctor/{uuid} [get]
+// @Security ApiKeyAuth
 func GetByDoctorUUID(c *gin.Context) {
 	var allNotes []models.FullTimetable
 	uuid := c.Param("uuid")
@@ -397,6 +498,24 @@ func GetByDoctorUUID(c *gin.Context) {
 	c.JSON(200, allNotes)
 }
 
+
+// GetRoomTimetableByHospitalUUIDAndRoom godoc
+// GetRoomTimetableByHospitalUUIDAndRoom получение расписания кабинета больницы по uuid больницы
+// @Summary Получение расписания кабинета больницы по UUID больницы
+// @Description Получение расписания кабинета больницы по UUID больницы в конкретные временные промежутки. Только админы, менеджеры и врачи
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID доктора"
+// @Param room path string true "Название комнаты"
+// @Param from query string false "Start date filter (ISO8601)" Format(date-time)
+// @Param to query string false "End date filter (ISO8601)" Format(date-time)
+// @Success 200 {array} models.FullTimetable
+// @Failure 400 {object} map[string]string "Invalid parameters or missing token"
+// @Failure 404 {object} map[string]string "Hospital/Room not found"
+// @Failure 501 {object} map[string]string "Database query error"
+// @Router /Timetable/Hospital/{uuid}/Room/{room} [get]
+// @Security ApiKeyAuth
 func GetByHospitalUUIDAndRoom(c *gin.Context) {
 	var allNotes []models.FullTimetable
 	uuid, room := c.Param("uuid"), c.Param("room")
@@ -428,7 +547,7 @@ func GetByHospitalUUIDAndRoom(c *gin.Context) {
 		c.JSON(501, gin.H{"message": err.Error()})
 		return
 	}
-	
+
 	if !rows.Next() {
 		c.JSON(404, gin.H{"message": "timetable not ready"})
 		return
@@ -447,6 +566,20 @@ func GetByHospitalUUIDAndRoom(c *gin.Context) {
 	c.JSON(200, allNotes)
 }
 
+
+// GetAppointmentsByID godoc
+// GetAppointmentsByID получение слотов для записи у конкретного расписания
+// @Summary Получение слотов для записи у конктретного расписания
+// @Description Получение слотов для записи у конкретного расписания по ID расписания. Слоты - 30-ти минутные интервалы от from до to. Только авторизованные пользователи
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param id path string true "ID расписания"
+// @Success 200 {object} map[string][]time.Time "Список слотов"
+// @Failure 400 {object} map[string]string "Invalid parameters"
+// @Failure 404 {object} map[string]string "Cannot find timetable note"
+// @Router /Timetable/{id}/Appointments [get]
+// @Security ApiKeyAuth
 func GetAppointments(c *gin.Context) {
 	timetableIDParam := c.Param("id")
 	// Проверка параметров
@@ -460,7 +593,7 @@ func GetAppointments(c *gin.Context) {
 	var from, to time.Time
 	row := databaseConn.QueryRow("SELECT time_from, time_to FROM timetable WHERE id=$1", timetableID)
 	if err := row.Scan(&from, &to); err != nil {
-		c.JSON(400, gin.H{"message": "Cannot find timetable note"})
+		c.JSON(404, gin.H{"message": "Cannot find timetable note"})
 		c.Abort()
 		return
 	}
@@ -472,13 +605,30 @@ func GetAppointments(c *gin.Context) {
 	}
 
 	if len(slots) == 0 {
-		c.JSON(200, gin.H{"message": "no slots available"})
+		c.JSON(200, gin.H{"slots": "no slots available"})
 		return
 	}
 
 	c.JSON(200, gin.H{"slots": slots})
 }
 
+
+// MakeAnAppointment godoc
+// MakeAnAppointment записаться на прием
+// @Summary Запись на прием
+// @Description Запись на прием в конкретное время у конкретной записи расписания. Только авторизованные пользователи
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param id path string true "ID расписания"
+// @Param appointmentTime body models.AppointmentTime true "Время записи"
+// @Success 200 {object} map[string]string "Сообщение об успехе и ID записи на прием"
+// @Failure 400 {object} map[string]string "Invalid parameters"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Failure 501 {object} map[string]string "Internal Server Error"
+// @Failure 502 {object} map[string]string "Internal Server Error"
+// @Router /Timetable/{id}/Appointments [post]
+// @Security ApiKeyAuth
 func MakeAnAppointment(c *gin.Context) {
 	var appointmentTime models.AppointmentTime
 
@@ -547,6 +697,19 @@ func MakeAnAppointment(c *gin.Context) {
 	c.JSON(200, gin.H{"message": text})
 }
 
+
+// DeleteAppointment godoc
+// DeleteAppointment удалить запись на прием
+// @Summary Удаление записи на прием
+// @Description Удаление записи на прием по ID записи. Только админы, менеджеры и тот, кому принадлежит запись
+// @Tags Timetable
+// @Accept json
+// @Produce json
+// @Param id path string true "ID записи на прием"
+// @Success 200 {object} map[string]string "appointment deleted successfully"
+// @Failure 404 {object} map[string]string "сannot find appointment"
+// @Router /Appointment/{id} [delete]
+// @Security ApiKeyAuth
 func DeleteAppointment(c *gin.Context) {
 	appointmentIDParam := c.Param("id")
 	// Проверка параметров
@@ -560,14 +723,14 @@ func DeleteAppointment(c *gin.Context) {
 	var dbInfo string
 	row := databaseConn.QueryRow("SELECT pacient_username FROM appointments WHERE id=$1", appointmentID)
 	if err := row.Scan(&dbInfo); err != nil {
-		c.JSON(400, gin.H{"message": "Cannot find appointment"})
+		c.JSON(404, gin.H{"message": "сannot find appointment"})
 		c.Abort()
 		return
 	}
 
 	_, err = databaseConn.Exec("DELETE FROM appointments WHERE id=$1", appointmentID)
 	if err != nil {
-		c.JSON(404, gin.H{"message": "appointment not found"})
+		c.JSON(404, gin.H{"message": "сannot find appointment"})
 		c.Abort()
 		return
 	}

@@ -4,11 +4,20 @@ import (
 	"time"
 	"timetable_microservice/controllers"
 	"timetable_microservice/middlewares"
+	_ "timetable_microservice/docs"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/files"
 )
 
+// @title Timetable microservice API
+// @version 1.0
+// @description Timetable API on Go documentation
+
+// @host localhost:8083
+// @BasePath /api
 func main() {
 	router := gin.Default()
 	defer router.Run("127.0.0.1:8083")
@@ -24,6 +33,8 @@ func main() {
 	router.Use(cors.New(config))
 
 	timetable := router.Group("/api")
+	timetable.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	timetable.POST("/Timetable", middlewares.IsAdminOrManager(), controllers.AddNewNote)
 	timetable.PUT("/Timetable/:id", middlewares.IsAdminOrManager(), controllers.UpdateNote)
 	timetable.DELETE("/Timetable/:id", middlewares.IsAdminOrManager(), controllers.DeleteByID)

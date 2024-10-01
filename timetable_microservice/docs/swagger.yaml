@@ -1,0 +1,537 @@
+basePath: /api
+definitions:
+  models.AppointmentTime:
+    properties:
+      time:
+        type: string
+    type: object
+  models.FullTimetable:
+    properties:
+      doctor_uuid:
+        type: string
+      from:
+        type: string
+      hospital_uuid:
+        type: string
+      room:
+        type: string
+      to:
+        type: string
+      uuid:
+        type: integer
+    type: object
+  models.Timetable:
+    properties:
+      doctor_uuid:
+        type: string
+      from:
+        type: string
+      hospital_uuid:
+        type: string
+      room:
+        type: string
+      to:
+        type: string
+    type: object
+host: localhost:8083
+info:
+  contact: {}
+  description: Timetable API on Go documentation
+  title: Timetable microservice API
+  version: "1.0"
+paths:
+  /Appointment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление записи на прием по ID записи. Только админы, менеджеры
+        и тот, кому принадлежит запись
+      parameters:
+      - description: ID записи на прием
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: appointment deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: сannot find appointment
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление записи на прием
+      tags:
+      - Timetable
+  /Timetable:
+    post:
+      consumes:
+      - application/json
+      description: Добавление новой записи в расписание с определенной больницей и
+        доктором. Только админы и менеджеры
+      parameters:
+      - description: Информация о записи
+        in: body
+        name: timetable
+        required: true
+        schema:
+          $ref: '#/definitions/models.Timetable'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message": "note added successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message": "invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message": "hospital/doctor/room not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message": "internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление новой записи в расписание
+      tags:
+      - Timetable
+  /Timetable/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление конкретной и созданной записи в расписании по ID. Только
+        админы и менеджеры
+      parameters:
+      - description: ID записи
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message": "note deleted successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message": "invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message": "note not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление записи в расписании по ID
+      tags:
+      - Timetable
+    put:
+      consumes:
+      - application/json
+      description: Обновление конкретной и созданной записи в расписании по ID. Только
+        админы и менеджеры. Нельзя изменить если есть записавшиеся
+      parameters:
+      - description: ID записи
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Информация о записи
+        in: body
+        name: timetable
+        required: true
+        schema:
+          $ref: '#/definitions/models.Timetable'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message": "note updated successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message": "invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message": "hospital/doctor/room not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message": "internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Обновление записи в расписании по ID
+      tags:
+      - Timetable
+  /Timetable/{id}/Appointments:
+    get:
+      consumes:
+      - application/json
+      description: Получение слотов для записи у конкретного расписания по ID расписания.
+        Слоты - 30-ти минутные интервалы от from до to. Только авторизованные пользователи
+      parameters:
+      - description: ID расписания
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список слотов
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+        "400":
+          description: Invalid parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Cannot find timetable note
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение слотов для записи у конктретного расписания
+      tags:
+      - Timetable
+    post:
+      consumes:
+      - application/json
+      description: Запись на прием в конкретное время у конкретной записи расписания.
+        Только авторизованные пользователи
+      parameters:
+      - description: ID расписания
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Время записи
+        in: body
+        name: appointmentTime
+        required: true
+        schema:
+          $ref: '#/definitions/models.AppointmentTime'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщение об успехе и ID записи на прием
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "502":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Запись на прием
+      tags:
+      - Timetable
+  /Timetable/Doctor/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление созданных записей в расписании по UUID доктора. Только
+        админы и менеджеры
+      parameters:
+      - description: UUID доктора
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message": "note deleted successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message": "Cannot find doctor''s note'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message": "note not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление записей в расписании по UUID доктора
+      tags:
+      - Timetable
+    get:
+      consumes:
+      - application/json
+      description: Получение расписания доктора по UUID в конкретные временные промежутки.
+        Только авторизованные пользователи
+      parameters:
+      - description: UUID доктора
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Start date filter (ISO8601)
+        format: date-time
+        in: query
+        name: from
+        type: string
+      - description: End date filter (ISO8601)
+        format: date-time
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FullTimetable'
+            type: array
+        "400":
+          description: Invalid parameters or missing token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Doctor not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Database query error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение расписания доктора по UUID
+      tags:
+      - Timetable
+  /Timetable/Hospital/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление созданных записей в расписании по UUID больницы. Только
+        админы и менеджеры
+      parameters:
+      - description: UUID больницы
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message": "note deleted successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message": "Cannot find hospital''s note/Note not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление записей в расписании по UUID больницы
+      tags:
+      - Timetable
+    get:
+      consumes:
+      - application/json
+      description: Получение расписания больницы по UUID в конкретные временные промежутки.
+        Только авторизованные пользователи
+      parameters:
+      - description: UUID больницы
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Start date filter (ISO8601)
+        format: date-time
+        in: query
+        name: from
+        type: string
+      - description: End date filter (ISO8601)
+        format: date-time
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FullTimetable'
+            type: array
+        "400":
+          description: Invalid parameters or missing token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Hospital not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Database query error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение расписания больницы по UUID
+      tags:
+      - Timetable
+  /Timetable/Hospital/{uuid}/Room/{room}:
+    get:
+      consumes:
+      - application/json
+      description: Получение расписания кабинета больницы по UUID больницы в конкретные
+        временные промежутки. Только админы, менеджеры и врачи
+      parameters:
+      - description: UUID доктора
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Название комнаты
+        in: path
+        name: room
+        required: true
+        type: string
+      - description: Start date filter (ISO8601)
+        format: date-time
+        in: query
+        name: from
+        type: string
+      - description: End date filter (ISO8601)
+        format: date-time
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FullTimetable'
+            type: array
+        "400":
+          description: Invalid parameters or missing token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Hospital/Room not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Database query error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение расписания кабинета больницы по UUID больницы
+      tags:
+      - Timetable
+swagger: "2.0"
