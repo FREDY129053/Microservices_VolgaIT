@@ -106,13 +106,25 @@ func _IsPatientUser(patientUUID string) bool {
 }
 
 
+// GetAllAccountHistories godoc
+// GetAllAccountHistories получение всех посещений и назначений аккаунта
+// @Summary Получение всех посещений и назначений аккаунта
+// @Description Получение всех посещений и назначений аккаунта по ID. Только врачи и тот, кому принадлежит история
+// @Tags Documents
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID аккаунта(пациента)"
+// @Success 200 {object} map[string][]models.FullHistory "Все посещения и назначения аккаунта"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Router /Account/{uuid} [get]
+// @Security ApiKeyAuth
 func GetAllAccountHistories(c *gin.Context) {
 	var allHistories []models.FullHistory
 	uuidPatient := c.Param("uuid")
 
 	rows, err := databaseConn.Query(`SELECT * FROM history WHERE pacient_uuid=$1`, uuidPatient)
 	if err != nil {
-		c.JSON(501, gin.H{"message": err.Error()})
+		c.JSON(400, gin.H{"message": "Invalid request"})
 		c.Abort()
 		return
 	}
@@ -131,6 +143,19 @@ func GetAllAccountHistories(c *gin.Context) {
 	c.JSON(200, gin.H{"histories": allHistories})
 }
 
+
+// GetHistory godoc
+// GetHistory получение конкретной истории посещения и назначений
+// @Summary Получение конкретной истории посещения и назначений
+// @Description Получение конкретной истории посещения и назначений по ID. Только врачи и тот, кому принадлежит история
+// @Tags Documents
+// @Accept json
+// @Produce json
+// @Param id path string true "ID истории"
+// @Success 200 {object} map[string][]models.FullHistory "Информация о конкретной истории"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Router /{id} [get]
+// @Security ApiKeyAuth
 func GetHistory(c *gin.Context) {
 	var history models.FullHistory
 	idParam := c.Param("id")
@@ -153,6 +178,21 @@ func GetHistory(c *gin.Context) {
 	c.JSON(200, gin.H{"history": history})
 }
 
+
+// AddNewHistory godoc
+// AddNewHistory добавление истории посещения
+// @Summary Добавление новой истории посещений
+// @Description Добавление новой истории посещений. Только админы, менеджеры и врачи. PatientUUID - аккаунт с ролью user
+// @Tags Documents
+// @Accept json
+// @Produce json
+// @Param history body models.HistoryInfo true "Информация об истории"
+// @Success 200 {object} map[string]string "message": "history added successfully"
+// @Failure 400 {object} map[string]string "message": "invalid request/patient must be user"
+// @Failure 404 {object} map[string]string "message": "hospital/doctor/room not found"
+// @Failure 500 {object} map[string]string "message": "internal server error"
+// @Router / [post]
+// @Security ApiKeyAuth
 func AddNewHistory(c *gin.Context) {
 	var newHistory models.HistoryInfo
 	token, err := c.Cookie("tokenAccess")
@@ -199,6 +239,22 @@ func AddNewHistory(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "history added successfully"})
 }
 
+
+// UpdateHistory godoc
+// UpdateHistory обновляет историю посещения по id
+// @Summary Обновление истории посещения по ID
+// @Description Обновление конкретной истории посещения по ID. Только админы, менеджеры и врачи.
+// @Tags Documents
+// @Accept json
+// @Produce json
+// @Param id path string true "ID истории"
+// @Param history body models.HistoryInfo true "Информация ою истории"
+// @Success 200 {object} map[string]string "message": "history updated successfully"
+// @Failure 400 {object} map[string]string "message": "invalid request/parameter id should be a number"
+// @Failure 404 {object} map[string]string "message": "hospital/doctor/room not found"
+// @Failure 500 {object} map[string]string "message": "internal server error"
+// @Router /{id} [put]
+// @Security ApiKeyAuth
 func UpdateHistory(c *gin.Context) {
 	var historyInfo models.HistoryInfo
 	idParam := c.Param("id")

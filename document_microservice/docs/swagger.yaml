@@ -1,0 +1,204 @@
+basePath: /api/History
+definitions:
+  models.FullHistory:
+    properties:
+      data:
+        type: string
+      date:
+        type: string
+      doctor_uuid:
+        type: string
+      hospital_uuid:
+        type: string
+      id:
+        type: integer
+      patient_uuid:
+        type: string
+      room:
+        type: string
+    type: object
+  models.HistoryInfo:
+    properties:
+      data:
+        type: string
+      date:
+        type: string
+      doctor_uuid:
+        type: string
+      hospital_uuid:
+        type: string
+      patient_uuid:
+        type: string
+      room:
+        type: string
+    type: object
+host: localhost:8084
+info:
+  contact: {}
+  description: Document API on Go documentation
+  title: Document microservice API
+  version: "1.0"
+paths:
+  /:
+    post:
+      consumes:
+      - application/json
+      description: Добавление новой истории посещений. Только админы, менеджеры и
+        врачи. PatientUUID - аккаунт с ролью user
+      parameters:
+      - description: Информация об истории
+        in: body
+        name: history
+        required: true
+        schema:
+          $ref: '#/definitions/models.HistoryInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message": "history added successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message": "invalid request/patient must be user'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message": "hospital/doctor/room not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message": "internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление новой истории посещений
+      tags:
+      - Documents
+  /{id}:
+    get:
+      consumes:
+      - application/json
+      description: Получение конкретной истории посещения и назначений по ID. Только
+        врачи и тот, кому принадлежит история
+      parameters:
+      - description: ID истории
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о конкретной истории
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/models.FullHistory'
+              type: array
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение конкретной истории посещения и назначений
+      tags:
+      - Documents
+    put:
+      consumes:
+      - application/json
+      description: Обновление конкретной истории посещения по ID. Только админы, менеджеры
+        и врачи.
+      parameters:
+      - description: ID истории
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Информация ою истории
+        in: body
+        name: history
+        required: true
+        schema:
+          $ref: '#/definitions/models.HistoryInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message": "history updated successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message": "invalid request/parameter id should be a number'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message": "hospital/doctor/room not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message": "internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Обновление истории посещения по ID
+      tags:
+      - Documents
+  /Account/{uuid}:
+    get:
+      consumes:
+      - application/json
+      description: Получение всех посещений и назначений аккаунта по ID. Только врачи
+        и тот, кому принадлежит история
+      parameters:
+      - description: UUID аккаунта(пациента)
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Все посещения и назначения аккаунта
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/models.FullHistory'
+              type: array
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение всех посещений и назначений аккаунта
+      tags:
+      - Documents
+swagger: "2.0"

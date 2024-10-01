@@ -7,7 +7,19 @@ content-Type: application/json
 	"hospital_uuid": "e95c1537-2e4b-4590-9fea-a485efd480b3",
 	"doctor_uuid": "1a149dc8-4f38-41fb-aedd-04ed04b0b88b",
 	"room": "Венеролог",
-	"data": "Хуй не стоит и не надо"
+	"data": "Витамина D нет и не надо"
+}
+
+PUT http://localhost:8084/api/History/1
+content-Type: application/json
+
+{
+  "date": "2024-09-28T19:30:00+10:00",
+	"patient_uuid": "019ca04c-3415-4bf2-90ba-b57ab60321b1",
+	"hospital_uuid": "e95c1537-2e4b-4590-9fea-a485efd480b3",
+	"doctor_uuid": "1a149dc8-4f38-41fb-aedd-04ed04b0b88b",
+	"room": "Венеролог",
+	"data": "Витамина D нет и не надо"
 }
 
 GET http://localhost:8084/api/History/Account/019ca04c-3415-4bf2-90ba-b57ab60321b1

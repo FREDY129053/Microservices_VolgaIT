@@ -3,12 +3,22 @@ package main
 import (
 	"document_microservice/controllers"
 	"document_microservice/middlewares"
+	_ "document_microservice/docs"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/files"
 )
 
+
+// @title Document microservice API
+// @version 1.0
+// @description Document API on Go documentation
+
+// @host localhost:8084
+// @BasePath /api/History
 func main() {
 	router := gin.Default()
 	defer router.Run("127.0.0.1:8084")
@@ -24,6 +34,8 @@ func main() {
 	router.Use(cors.New(config))
 
 	history := router.Group("/api/History")
+	history.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	history.GET("/Account/:uuid", middlewares.IsDoctorOrPatient(), controllers.GetAllAccountHistories)
 	history.GET("/:id", middlewares.IsDoctorOrPatient(), controllers.GetHistory)
 
