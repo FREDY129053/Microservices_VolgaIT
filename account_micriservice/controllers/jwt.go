@@ -9,6 +9,19 @@ import (
 	"time"
 )
 
+
+// VerifyingToken godoc
+// VerifyingToken верификация access токена
+// @Summary Проверка access токена
+// @Description Проверка access токена на поддельность
+// @Tags JWT
+// @Accept json
+// @Produce json
+// @Param access_token path string true "Access токен"
+// @Success 200 {object} []string "Token verified successfully"
+// @Failure 400 {object} map[string]string "Token verification failed"
+// @Router /Authentication/Validate [get]
+// @Security ApiKeyAuth
 func VerifyingToken(c *gin.Context) {
 	access_token := c.Query("access_token")
 
@@ -23,6 +36,19 @@ func VerifyingToken(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "Token verified successfully"})
 }
 
+
+// RefreshAccessToken godoc
+// RefreshAccessToken обновление access токена
+// @Summary Обновление access токена
+// @Description Обновление access токена с помощью refresh токена
+// @Tags JWT
+// @Accept json
+// @Produce json
+// @Success 200 {object} []string "Token refreshed successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Router /Authentication/Refresh [get]
+// @Security ApiKeyAuth
 func RefreshAccessToken(c *gin.Context) {
 	refreshToken, err := c.Cookie("tokenRefresh")
 	if err != nil {

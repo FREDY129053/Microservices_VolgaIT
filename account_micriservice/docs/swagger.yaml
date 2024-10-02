@@ -1,0 +1,556 @@
+basePath: /api
+definitions:
+  models.AdminAccounts:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  models.DoctorsInfo:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      username:
+        type: string
+      uuid:
+        type: string
+    type: object
+  models.SigninUser:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.SignupUser:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UpdateUser:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
+  models.UserInfo:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+      uuid:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Account API on Go documentation
+  title: Account microservice API
+  version: "1.0"
+paths:
+  /Accounts:
+    get:
+      consumes:
+      - application/json
+      description: Получение определенного числа аккаунтов в базе данных. Только админы
+      parameters:
+      - description: Начало выборки(порядковый номер)
+        in: path
+        name: from
+        required: true
+        type: string
+      - description: Размер выборки
+        in: path
+        name: count
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Все аккаунты
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/models.UserInfo'
+              type: array
+            type: object
+        "400":
+          description: Parameter from/count should be a number
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение аккаунтов в базе данных
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Добавление пользователя админом. Только админы
+      parameters:
+      - description: Информация о пользователе
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminAccounts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User created successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Cannot create user
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление пользователя админом
+      tags:
+      - Users
+  /Accounts/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление аккаунта по UUID. Только админы
+      parameters:
+      - description: UUID аккаунта
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Cannot find user
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление аккаунта
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Изменение аккаунта по UUID с переданной инофрмацией в базе данных.
+        Только админы
+      parameters:
+      - description: UUID аккаунта
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Информация об аккаунте
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminAccounts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Sever Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Изменение аккаунта в базе данных
+      tags:
+      - Users
+  /Accounts/Doctors:
+    get:
+      consumes:
+      - application/json
+      description: Получение определенного числа докторов в базе данных. Только авторизованные
+        пользователи
+      parameters:
+      - description: Фильтр имени
+        in: path
+        name: nameFilter
+        required: true
+        type: string
+      - description: Начало выборки(порядковый номер)
+        in: path
+        name: from
+        required: true
+        type: string
+      - description: Размер выборки
+        in: path
+        name: count
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Все доктора
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/models.DoctorsInfo'
+              type: array
+            type: object
+        "400":
+          description: Parameter from/count should be a number
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение докторов в базе данных
+      tags:
+      - Users
+  /Accounts/Doctors/{uuid}:
+    get:
+      consumes:
+      - application/json
+      description: Получение информации о конкретном докторе по UUID. Только авторизованные
+        пользователи
+      parameters:
+      - description: UUID Доктора
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о докторе
+          schema:
+            $ref: '#/definitions/models.DoctorsInfo'
+        "404":
+          description: Cannot find doctor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение информации о конкретном докторе
+      tags:
+      - Users
+  /Accounts/Me:
+    get:
+      consumes:
+      - application/json
+      description: Получение информации о своем аккаунте. Только авторизованные пользователи
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация об аккаунте
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "404":
+          description: Cannot find hospital
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение информации о своем аккаунте
+      tags:
+      - Users
+  /Accounts/Update:
+    put:
+      consumes:
+      - application/json
+      description: Изменение своего аккаунта с переданной инофрмацией в базе данных.
+        Только авторизованные пользователи
+      parameters:
+      - description: Информация об аккаунте
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Sever Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Изменение своего аккаунта в базе данных
+      tags:
+      - Users
+  /Authentication/Refresh:
+    get:
+      consumes:
+      - application/json
+      description: Обновление access токена с помощью refresh токена
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token refreshed successfully
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Обновление access токена
+      tags:
+      - JWT
+  /Authentication/SignIn:
+    post:
+      consumes:
+      - application/json
+      description: Вход в аккаунт пользователя
+      parameters:
+      - description: Данные для входа
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/models.SigninUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User logged in
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User does not exist/User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Cannot create access/refresh token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Вход в аккаунт
+      tags:
+      - Users
+  /Authentication/SignOut:
+    put:
+      consumes:
+      - application/json
+      description: Выход из аккаунта пользователя. Только авторизованные пользователи
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User logged out
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Выход из аккаунта
+      tags:
+      - Users
+  /Authentication/SignUp:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация пользователя
+      parameters:
+      - description: Информация о пользователе
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignupUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User created successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: User already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Cannot create user
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Регистрация пользователя
+      tags:
+      - Users
+  /Authentication/Validate:
+    get:
+      consumes:
+      - application/json
+      description: Проверка access токена на поддельность
+      parameters:
+      - description: Access токен
+        in: path
+        name: access_token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token verified successfully
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Token verification failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Проверка access токена
+      tags:
+      - JWT
+swagger: "2.0"

@@ -17,6 +17,21 @@ import (
 var databaseConn = database.GetConnection()
 var jwtKey = []byte(os.Getenv("SECRET_KEY"))
 
+
+// SignUp godoc
+// SignUp регистрация пользователя
+// @Summary Регистрация пользователя
+// @Description Регистрация пользователя
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param info body models.SignupUser true "Информация о пользователе"
+// @Success 200 {object} map[string]string "User created successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 401 {object} map[string]string "User already exists"
+// @Failure 500 {object} map[string]string "Cannot create user"
+// @Router /Authentication/SignUp [post]
+// @Security ApiKeyAuth
 func Signup(c *gin.Context) {
 	var user models.SignupUser
 
@@ -31,7 +46,7 @@ func Signup(c *gin.Context) {
 	var existingUser models.SigninUser
 	row := databaseConn.QueryRow("SELECT username,password FROM Users WHERE username=$1", user.Username)
 	if err := row.Scan(&existingUser.Username, &existingUser.Password); err == nil {
-		c.JSON(400, gin.H{"message": "User already exists"})
+		c.JSON(401, gin.H{"message": "User already exists"})
 		c.Abort()
 		return
 	}
@@ -55,6 +70,21 @@ func Signup(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "User created successfully"})
 }
 
+
+// SignIn godoc
+// SignIn вход в аккаунт
+// @Summary Вход в аккаунт
+// @Description Вход в аккаунт пользователя
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param info body models.SigninUser true "Данные для входа"
+// @Success 200 {object} map[string]string "User logged in"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 404 {object} map[string]string "User does not exist/User not found"
+// @Failure 500 {object} map[string]string "Cannot create access/refresh token"
+// @Router /Authentication/SignIn [post]
+// @Security ApiKeyAuth
 func Signin(c *gin.Context) {
 	var user models.SigninUser
 
@@ -68,7 +98,7 @@ func Signin(c *gin.Context) {
 	var existingUser models.SigninUser
 	row := databaseConn.QueryRow("SELECT username,password FROM users WHERE username=$1", user.Username)
 	if err := row.Scan(&existingUser.Username, &existingUser.Password); err != nil {
-		c.JSON(400, gin.H{"message": "User does not exist"})
+		c.JSON(404, gin.H{"message": "User does not exist"})
 		c.Abort()
 		return
 	}
@@ -149,12 +179,36 @@ func Signin(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "User logged in"})
 }
 
+
+// SignOut godoc
+// SignOut выход из аккаунта
+// @Summary Выход из аккаунта
+// @Description Выход из аккаунта пользователя. Только авторизованные пользователи
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]string "User logged out"
+// @Router /Authentication/SignOut [put]
+// @Security ApiKeyAuth
 func SignOut(c *gin.Context) {
 	c.SetCookie("tokenAccess", "", -1, "/", "localhost", false, true)
 	c.SetCookie("tokenRefresh", "", -1, "/", "localhost", false, true)
 	c.JSON(200, gin.H{"message": "User logged out"})
 }
 
+
+// GetInfoAboutMyAccount godoc
+// GetInfoAboutMyAccount получение информации о своем аккаунте
+// @Summary Получение информации о своем аккаунте
+// @Description Получение информации о своем аккаунте. Только авторизованные пользователи
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.UserInfo "Информация об аккаунте"
+// @Success 400 {object} models.UserInfo "Invalid request"
+// @Failure 404 {object} map[string]string "Cannot find hospital"
+// @Router /Accounts/Me [get]
+// @Security ApiKeyAuth
 func GetInfoAboutAccount(c *gin.Context) {
 	var userInfo models.UserInfo
 
@@ -199,6 +253,20 @@ func GetInfoAboutAccount(c *gin.Context) {
 	c.JSON(200, userInfo)
 }
 
+
+// UpdateMyAccount godoc
+// UpdateMyAccount изменение своего аккаунта
+// @Summary Изменение своего аккаунта в базе данных
+// @Description Изменение своего аккаунта с переданной инофрмацией в базе данных. Только авторизованные пользователи
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param info body models.UpdateUser true "Информация об аккаунте"
+// @Success 200 {object} map[string]string "User updated successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 500 {object} map[string]string "Internal Sever Error"
+// @Router /Accounts/Update [put]
+// @Security ApiKeyAuth
 func UpdateAccount(c *gin.Context) {
 	var updateInfo models.UpdateUser
 
@@ -232,6 +300,21 @@ func UpdateAccount(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "User updated successfully"})
 }
 
+
+// GetAccounts godoc
+// GetAccounts получение аккаунтов в базе данных
+// @Summary Получение аккаунтов в базе данных
+// @Description Получение определенного числа аккаунтов в базе данных. Только админы
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param from path string true "Начало выборки(порядковый номер)"
+// @Param count path string true "Размер выборки"
+// @Success 200 {object} map[string][]models.UserInfo "Все аккаунты"
+// @Failure 400 {object} map[string]string "Parameter from/count should be a number"
+// @Failure 501 {object} map[string]string "Internal Server Error"
+// @Router /Accounts [get]
+// @Security ApiKeyAuth
 func GetAccounts(c *gin.Context) {
 	fromParam := c.Query("from")
 	countParam := c.Query("count")
@@ -293,6 +376,20 @@ func GetAccounts(c *gin.Context) {
 	c.JSON(200, users)
 }
 
+
+// AddAccountByAdmin godoc
+// AddAccountByAdmin добавление пользователя админом
+// @Summary Добавление пользователя админом
+// @Description Добавление пользователя админом. Только админы
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param info body models.AdminAccounts true "Информация о пользователе"
+// @Success 200 {object} map[string]string "User created successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 500 {object} map[string]string "Cannot create user"
+// @Router /Accounts [post]
+// @Security ApiKeyAuth
 func AddAccountByAdmin(c *gin.Context) {
 	var accountInfo models.AdminAccounts
 
@@ -330,6 +427,22 @@ func AddAccountByAdmin(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "User created successfully"})
 }
 
+
+// UpdateAccountByAdmin godoc
+// UpdateAccountByAdmin изменение аккаунта
+// @Summary Изменение аккаунта в базе данных
+// @Description Изменение аккаунта по UUID с переданной инофрмацией в базе данных. Только админы
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID аккаунта"
+// @Param info body models.AdminAccounts true "Информация об аккаунте"
+// @Success 200 {object} map[string]string "User updated successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 404 {object} map[string]string "User not found"
+// @Failure 500 {object} map[string]string "Internal Sever Error"
+// @Router /Accounts/{uuid} [put]
+// @Security ApiKeyAuth
 func ChangeAccountByAdmin(c *gin.Context) {
 	var accountInfo models.AdminAccounts
 	userUUID := c.Param("uuid")
@@ -370,13 +483,26 @@ func ChangeAccountByAdmin(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "User updated successfully"})
 }
 
+
+// DeleteAccountByAdmin godoc
+// DeleteAccountByAdmin удалить аккаунт
+// @Summary Удаление аккаунта
+// @Description Удаление аккаунта по UUID. Только админы
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID аккаунта"
+// @Success 200 {object} map[string]string "User deleted successfully"
+// @Failure 404 {object} map[string]string "Cannot find user"
+// @Router /Accounts/{uuid} [delete]
+// @Security ApiKeyAuth
 func DeleteAccountByAdmin(c *gin.Context) {
 	userUUID := c.Param("uuid")
 
 	var dbInfo string
 	row := databaseConn.QueryRow("SELECT username FROM Users WHERE uuid=$1", userUUID)
 	if err := row.Scan(&dbInfo); err != nil {
-		c.JSON(400, gin.H{"message": "Cannot find user"})
+		c.JSON(404, gin.H{"message": "Cannot find user"})
 		c.Abort()
 		return
 	}
@@ -391,6 +517,22 @@ func DeleteAccountByAdmin(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "User deleted successfully"})
 }
 
+
+// GetAllDoctors godoc
+// GetAllDoctors получение докторов в базе данных
+// @Summary Получение докторов в базе данных
+// @Description Получение определенного числа докторов в базе данных. Только авторизованные пользователи
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param nameFilter path string true "Фильтр имени"
+// @Param from path string true "Начало выборки(порядковый номер)"
+// @Param count path string true "Размер выборки"
+// @Success 200 {object} map[string][]models.DoctorsInfo "Все доктора"
+// @Failure 400 {object} map[string]string "Parameter from/count should be a number"
+// @Failure 501 {object} map[string]string "Internal Server Error"
+// @Router /Accounts/Doctors [get]
+// @Security ApiKeyAuth
 func GetAllDoctors(c *gin.Context) {
 	var allDoctors []models.DoctorsInfo
 
@@ -439,6 +581,19 @@ func GetAllDoctors(c *gin.Context) {
 	c.JSON(200, allDoctors)
 }
 
+
+// GetDoctor godoc
+// GetDoctor получение информации о конкретном докторе
+// @Summary Получение информации о конкретном докторе
+// @Description Получение информации о конкретном докторе по UUID. Только авторизованные пользователи
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param uuid path string true "UUID Доктора"
+// @Success 200 {object} models.DoctorsInfo "Информация о докторе"
+// @Failure 404 {object} map[string]string "Cannot find doctor"
+// @Router /Accounts/Doctors/{uuid} [get]
+// @Security ApiKeyAuth
 func GetDoctor(c *gin.Context) {
 	var doctor models.DoctorsInfo
 	userUUID := c.Param("uuid")
@@ -448,7 +603,7 @@ func GetDoctor(c *gin.Context) {
 	row := databaseConn.QueryRow("SELECT uuid, username, first_name, password FROM Users WHERE uuid=$1", userUUID)
 	if err := row.Scan(&doctor.UUID, &doctor.Username, &doctor.FirstName, &doctor.LastName); err != nil {
 		log.Printf("Error here = %s\n", err.Error())
-		c.JSON(400, gin.H{"message": "Cannot find doctor"})
+		c.JSON(404, gin.H{"message": "Cannot find doctor"})
 		c.Abort()
 		return
 	}

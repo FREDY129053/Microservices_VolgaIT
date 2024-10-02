@@ -146,7 +146,7 @@ func GetHospitalInfo(c *gin.Context) {
 // @Tags Hospitals
 // @Accept json
 // @Produce json
-// @Param uuid path string true "UUD больницы"
+// @Param uuid path string true "UUID больницы"
 // @Success 200 {object} []string "Список кабинетов больницы"
 // @Failure 404 {object} map[string]string "Hospital not found"
 // @Router /{uuid}/Rooms [get]
@@ -292,7 +292,7 @@ func UpdateHospital(c *gin.Context) {
 // DeleteHospital godoc
 // DeleteHospital удалить больницу
 // @Summary Удаление больницы
-// @Description Удаление записи о больницу по UUID больницы. Только админы
+// @Description Удаление записи о больнице по UUID больницы. Только админы
 // @Tags Hospitals
 // @Accept json
 // @Produce json
