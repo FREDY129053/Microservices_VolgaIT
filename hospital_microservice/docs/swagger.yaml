@@ -1,0 +1,276 @@
+basePath: /api/Hospitals
+definitions:
+  models.AddHospitalInfo:
+    properties:
+      address:
+        type: string
+      contact_phone:
+        type: string
+      name:
+        type: string
+      rooms:
+        items:
+          type: string
+        type: array
+    type: object
+  models.HospitalInfo:
+    properties:
+      address:
+        type: string
+      contact_phone:
+        type: string
+      name:
+        type: string
+      rooms:
+        items:
+          type: string
+        type: array
+      uuid:
+        type: string
+    type: object
+host: localhost:8082
+info:
+  contact: {}
+  description: Hospital API on Go documentation
+  title: Hospital microservice API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Получение определенного числа больниц в базе данных. Только авторизованные
+        пользователи.
+      parameters:
+      - description: Начало выборки(порядковый номер)
+        in: path
+        name: from
+        required: true
+        type: string
+      - description: Размер выборки
+        in: path
+        name: count
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Все больницы
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/models.HospitalInfo'
+              type: array
+            type: object
+        "400":
+          description: Parameter from/count should be a number
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение больниц в базе данных
+      tags:
+      - Hospitals
+    post:
+      consumes:
+      - application/json
+      description: Добавление больницы с переданной инофрмацией в базу данных. Только
+        админы
+      parameters:
+      - description: Информация о больнице
+        in: body
+        name: hospital
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddHospitalInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hospital created successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Sever Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Internal Sever Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление больницы в базу данных
+      tags:
+      - Hospitals
+  /{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление записи о больницу по UUID больницы. Только админы
+      parameters:
+      - description: UUID больницы
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hospital deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Oi, hospital not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление больницы
+      tags:
+      - Hospitals
+    get:
+      consumes:
+      - application/json
+      description: Получение информации о больнице по UUID. Только авторизованные
+        пользователи
+      parameters:
+      - description: UUD больницы
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о больнице
+          schema:
+            items:
+              $ref: '#/definitions/models.HospitalInfo'
+            type: array
+        "404":
+          description: Cannot find hospital
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение информации о больнице
+      tags:
+      - Hospitals
+    put:
+      consumes:
+      - application/json
+      description: Изменение больницы с переданной инофрмацией в базе данных. Только
+        админы
+      parameters:
+      - description: UUD больницы
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Информация о больнице
+        in: body
+        name: hospital
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddHospitalInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hospital updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Hospital not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Sever Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "501":
+          description: Internal Sever Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Изменение больницы в базе данных
+      tags:
+      - Hospitals
+  /{uuid}/Rooms:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка всех кабинетов больницы по ее UUID. Только авторизованные
+        пользователи
+      parameters:
+      - description: UUD больницы
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список кабинетов больницы
+          schema:
+            items:
+              type: string
+            type: array
+        "404":
+          description: Hospital not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Получение списка кабинетов больницы
+      tags:
+      - Hospitals
+swagger: "2.0"

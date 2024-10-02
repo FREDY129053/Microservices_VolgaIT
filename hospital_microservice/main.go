@@ -3,12 +3,21 @@ package main
 import (
 	"hospital_microservice/middlewares"
 	"hospital_microservice/controllers"
+	_ "hospital_microservice/docs"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/files"
 )
 
+// @title Hospital microservice API
+// @version 1.0
+// @description Hospital API on Go documentation
+
+// @host localhost:8082
+// @BasePath /api/Hospitals
 func main() {
 	router := gin.Default()
 	defer router.Run("127.0.0.1:8082")
@@ -24,6 +33,8 @@ func main() {
 	router.Use(cors.New(config))
 
 	hospitals := router.Group("/api/Hospitals")
+	hospitals.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	hospitals.GET("/", middlewares.IsAuthorized(), controllers.GetAllHospitals)
 	hospitals.GET("/:uuid", middlewares.IsAuthorized(), controllers.GetHospitalInfo)
 	hospitals.GET("/:uuid/Rooms", middlewares.IsAuthorized(), controllers.GetHospitalRooms)
