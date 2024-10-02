@@ -2,10 +2,10 @@ POST http://localhost:8081/api/Authentication/SignUp
 content-Type: application/json
 
 {
-  "last_name": "Doctorov",
-  "first_name": "Doctor",
-  "username": "doctor",
-  "password": "doctor"
+  "last_name": "Userov",
+  "first_name": "User",
+  "username": "user",
+  "password": "user"
 }
 
 POST http://localhost:8081/api/Authentication/SignIn
