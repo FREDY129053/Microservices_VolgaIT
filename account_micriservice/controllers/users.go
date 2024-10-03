@@ -5,7 +5,6 @@ import (
 	"account_microservice/helpers"
 	"account_microservice/models"
 	"log"
-	"os"
 	"time"
 	"strconv"
 	"strings"
@@ -15,7 +14,7 @@ import (
 )
 
 var databaseConn = database.GetConnection()
-var jwtKey = []byte(os.Getenv("SECRET_KEY"))
+var jwtKey = []byte(database.SECRET_KEY)
 
 
 // SignUp godoc

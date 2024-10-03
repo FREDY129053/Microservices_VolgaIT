@@ -1,16 +1,16 @@
 package helpers
 
 import (
-	"timetable_microservice/models"
-	"os"
 	"time"
+	"timetable_microservice/database"
+	"timetable_microservice/models"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 func ParseToken(tokenStr string) (claims *models.Claims, err error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &models.Claims{}, func(t *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SECRET_KEY")), nil
+		return []byte(database.SECRET_KEY), nil
 	})
 
 	if err != nil {

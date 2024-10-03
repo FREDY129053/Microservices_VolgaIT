@@ -1,8 +1,8 @@
 package helpers
 
 import (
+	"hospital_microservice/database"
 	"hospital_microservice/models"
-	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -10,7 +10,7 @@ import (
 
 func ParseToken(tokenStr string) (claims *models.Claims, err error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &models.Claims{}, func(t *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SECRET_KEY")), nil
+		return []byte(database.SECRET_KEY), nil
 	})
 
 	if err != nil {
