@@ -3,28 +3,28 @@ package main
 import (
 	"time"
 	"timetable_microservice/controllers"
-	"timetable_microservice/middlewares"
 	_ "timetable_microservice/docs"
+	"timetable_microservice/middlewares"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger"
-	"github.com/swaggo/files"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title Timetable microservice API
 // @version 1.0
 // @description Timetable API on Go documentation
 
-// @host localhost:8083
+// @host 0.0.0.0:8083
 // @BasePath /api
 func main() {
 	router := gin.Default()
-	defer router.Run("127.0.0.1:8083")
+	defer router.Run("0.0.0.0:8083")
 
 	// CORS
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://127.0.0.1:8081", "http://127.0.0.1:8082", "http://127.0.0.1:8083", "http://127.0.0.1:8084"}
+	config.AllowOrigins = []string{"http://127.0.0.1:8081", "http://127.0.0.1:8082", "http://127.0.0.1:8083", "http://127.0.0.1:8084", "http://0.0.0.0:8081", "http://0.0.0.0:8082", "http://0.0.0.0:8083", "http://0.0.0.0:8084",}
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
 	config.ExposeHeaders = []string{"Content-Length"}

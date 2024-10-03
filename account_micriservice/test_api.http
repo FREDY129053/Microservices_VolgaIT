@@ -1,4 +1,4 @@
-POST http://localhost:8081/api/Authentication/SignUp
+POST http://0.0.0.0:8081/api/Authentication/SignUp
 content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ content-Type: application/json
   "password": "user"
 }
 
-POST http://localhost:8081/api/Authentication/SignIn
+POST http://0.0.0.0:8081/api/Authentication/SignIn
 content-Type: application/json
 
 {
@@ -17,18 +17,18 @@ content-Type: application/json
 }
 
 
-PUT http://localhost:8081/api/Authentication/Refresh
+PUT http://0.0.0.0:8081/api/Authentication/Refresh
 
-PUT http://localhost:8081/api/Authentication/SignOut
-
-
-GET http://localhost:8081/api/Authentication/Validate?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJ1c2VyIl0sInVzZXJuYW1lIjoiZnJlZHkxMjkwNTMiLCJleHAiOjE3MjczMTQzMTksInN1YiI6ImZyZWR5MTI5MDUzIn0.A-723_Uya6Xw5iyuE2VIPCjen3w7N7OjWFRZCJaiTU0
+PUT http://0.0.0.0:8081/api/Authentication/SignOut
 
 
-GET http://localhost:8081/api/Accounts/Me
+GET http://0.0.0.0:8081/api/Authentication/Validate?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJ1c2VyIl0sInVzZXJuYW1lIjoiZnJlZHkxMjkwNTMiLCJleHAiOjE3MjczMTQzMTksInN1YiI6ImZyZWR5MTI5MDUzIn0.A-723_Uya6Xw5iyuE2VIPCjen3w7N7OjWFRZCJaiTU0
 
 
-PUT http://localhost:8081/api/Accounts/Update
+GET http://0.0.0.0:8081/api/Accounts/Me
+
+
+PUT http://0.0.0.0:8081/api/Accounts/Update
 content-Type: application/json
 
 {
@@ -37,9 +37,9 @@ content-Type: application/json
   "password": "1122333"
 }
 
-GET http://localhost:8081/api/Accounts?from=1&count=10
+GET http://0.0.0.0:8081/api/Accounts?from=1&count=10
 
-POST http://localhost:8081/api/Accounts
+POST http://0.0.0.0:8081/api/Accounts
 content-Type: application/json
 
 {
@@ -52,7 +52,7 @@ content-Type: application/json
   ]
 }
 
-PUT http://localhost:8081/api/Accounts/d61f91c3-d3bf-4b34-9894-e21bfa277ca4
+PUT http://0.0.0.0:8081/api/Accounts/d61f91c3-d3bf-4b34-9894-e21bfa277ca4
 content-Type: application/json
 
 {
@@ -66,8 +66,8 @@ content-Type: application/json
   ]
 }
 
-DELETE http://localhost:8081/api/Accounts/3072082b-7339-4fc0-8194-5d9b8e1a5d86
+DELETE http://0.0.0.0:8081/api/Accounts/3072082b-7339-4fc0-8194-5d9b8e1a5d86
 
-GET http://localhost:8081/api/Accounts/Doctors?nameFilter=&from=1&count=10
+GET http://0.0.0.0:8081/api/Accounts/Doctors?nameFilter=&from=1&count=10
 
-GET http://localhost:8081/api/Accounts/Doctors/1a149dc8-4f38-41fb-aedd-04ed04b0b88b
+GET http://0.0.0.0:8081/api/Accounts/Doctors/1a149dc8-4f38-41fb-aedd-04ed04b0b88b

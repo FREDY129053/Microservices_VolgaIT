@@ -17,15 +17,15 @@ import (
 // @version 1.0
 // @description Document API on Go documentation
 
-// @host localhost:8084
+// @host 0.0.0.0:8084
 // @BasePath /api/History
 func main() {
 	router := gin.Default()
-	defer router.Run("127.0.0.1:8084")
+	defer router.Run("0.0.0.0:8084")
 
 	// CORS
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://127.0.0.1:8081", "http://127.0.0.1:8082", "http://127.0.0.1:8083", "http://127.0.0.1:8084"}
+	config.AllowOrigins = []string{"http://127.0.0.1:8081", "http://127.0.0.1:8082", "http://127.0.0.1:8083", "http://127.0.0.1:8084", "http://0.0.0.0:8081", "http://0.0.0.0:8082", "http://0.0.0.0:8083", "http://0.0.0.0:8084",}
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
 	config.ExposeHeaders = []string{"Content-Length"}

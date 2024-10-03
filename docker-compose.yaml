@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 129053
+      POSTGRES_DB: volga_it
+    volumes:
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - microservices_network
+
+  account:
+    build: ./account_micriservice
+    container_name: account_service
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: 129053
+      DB_NAME: volga_it
+    networks:
+      - microservices_network
+    ports:
+      - "8081:8081"
+
+  document:
+    build: ./document_microservice
+    container_name: document_service
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: 129053
+      DB_NAME: volga_it
+    networks:
+      - microservices_network
+    ports:
+      - "8084:8084"
+
+  hospital:
+    build: ./hospital_microservice
+    container_name: hospital_service
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: 129053
+      DB_NAME: volga_it
+    networks:
+      - microservices_network
+    ports:
+      - "8082:8082"
+
+  timetable:
+    build: ./timetable_microservice
+    container_name: timetable_service
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: 129053
+      DB_NAME: volga_it
+    networks:
+      - microservices_network
+    ports:
+      - "8083:8083"
+
+networks:
+  microservices_network:
+    driver: bridge

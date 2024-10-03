@@ -1,4 +1,4 @@
-POST http://localhost:8083/api/Timetable
+POST http://0.0.0.0:8083/api/Timetable
 content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ content-Type: application/json
   "room": "Венеролог"
 }
 
-PUT http://localhost:8083/api/Timetable/1
+PUT http://0.0.0.0:8083/api/Timetable/1
 content-Type: application/json
 
 {
@@ -20,26 +20,26 @@ content-Type: application/json
   "room": "Психиатр"
 }
 
-DELETE http://localhost:8083/api/Timetable/4
+DELETE http://0.0.0.0:8083/api/Timetable/4
 
-DELETE http://localhost:8083/api/Timetable/Doctor/1a149dc8-4f38-41fb-aedd-04ed04b0b88b
+DELETE http://0.0.0.0:8083/api/Timetable/Doctor/1a149dc8-4f38-41fb-aedd-04ed04b0b88b
 
-DELETE http://localhost:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3
+DELETE http://0.0.0.0:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3
 
 
-GET http://localhost:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
+GET http://0.0.0.0:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
 
-GET http://localhost:8083/api/Timetable/Doctor/1a149dc8-4f38-41fb-aedd-04ed04b0b88b?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
+GET http://0.0.0.0:8083/api/Timetable/Doctor/1a149dc8-4f38-41fb-aedd-04ed04b0b88b?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
 
-GET http://localhost:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3/Room/Венеролог?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
+GET http://0.0.0.0:8083/api/Timetable/Hospital/e95c1537-2e4b-4590-9fea-a485efd480b3/Room/Венеролог?from=2024-09-28T14:00:00Z&to=2024-09-28T16:00:00Z
 
-GET http://localhost:8083/api/Timetable/7/Appointments
+GET http://0.0.0.0:8083/api/Timetable/7/Appointments
 
-POST http://localhost:8083/api/Timetable/7/Appointments
+POST http://0.0.0.0:8083/api/Timetable/7/Appointments
 content-Type: application/json
 
 {
   "time": "2024-09-28T19:00:00+10:00"
 }
 
-DELETE http://localhost:8083/api/Appointment/1
+DELETE http://0.0.0.0:8083/api/Appointment/1

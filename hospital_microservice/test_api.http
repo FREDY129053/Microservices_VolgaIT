@@ -1,14 +1,14 @@
-GET http://localhost:8082/api/Hospitals?from=1&count=10
+GET http://0.0.0.0:8082/api/Hospitals?from=1&count=10
 
 
-GET http://localhost:8082/api/Hospitals/e95c1537-2e4b-4590-9fea-a485efd480b3
+GET http://0.0.0.0:8082/api/Hospitals/e95c1537-2e4b-4590-9fea-a485efd480b3
 
 
-GET http://localhost:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692/Rooms
+GET http://0.0.0.0:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692/Rooms
 
 
 
-POST http://localhost:8082/api/Hospitals
+POST http://0.0.0.0:8082/api/Hospitals
 content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ content-Type: application/json
   ]
 }
 
-PUT http://localhost:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692
+PUT http://0.0.0.0:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692
 content-Type: application/json
 
 {
@@ -36,4 +36,4 @@ content-Type: application/json
   ]
 }
 
-DELETE http://localhost:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692
+DELETE http://0.0.0.0:8082/api/Hospitals/5b29489a-8faa-4bcc-bfc6-449e034ef692

@@ -55,14 +55,14 @@ func Signup(c *gin.Context) {
 	userUUID := helpers.GenerateUUID()
 	_, err2 := databaseConn.Exec("INSERT INTO users (uuid, username, first_name, last_name, password) VALUES($1, $2, $3, $4, $5)", userUUID, user.Username, user.FirstName, user.LastName, user.Password)
 	if err2 != nil {
-		c.JSON(500, gin.H{"message": "Cannot create user"})
+		c.JSON(500, gin.H{"message": err2.Error()})
 		c.Abort()
 		return
 	}
 
 	_, err := databaseConn.Exec("INSERT INTO user_and_roles (user_uuid) VALUES ($1)", userUUID)
 	if err != nil {
-		c.JSON(500, gin.H{"message": "Cannot create user"})
+		c.JSON(500, gin.H{"message": err.Error()})
 		c.Abort()
 		return
 	}
@@ -174,8 +174,8 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("tokenAccess", tokenAccessStr, int(expirationTimeAccess.Unix()), "/", "localhost", false, true)
-	c.SetCookie("tokenRefresh", tokenRefreshStr, int(expirationTimeRefresh.Unix()), "/", "localhost", false, true)
+	c.SetCookie("tokenAccess", tokenAccessStr, int(expirationTimeAccess.Unix()), "/", "0.0.0.0", false, true)
+	c.SetCookie("tokenRefresh", tokenRefreshStr, int(expirationTimeRefresh.Unix()), "/", "0.0.0.0", false, true)
 	c.JSON(200, gin.H{"message": "User logged in"})
 }
 
@@ -191,8 +191,8 @@ func Signin(c *gin.Context) {
 // @Router /Authentication/SignOut [put]
 // @Security ApiKeyAuth
 func SignOut(c *gin.Context) {
-	c.SetCookie("tokenAccess", "", -1, "/", "localhost", false, true)
-	c.SetCookie("tokenRefresh", "", -1, "/", "localhost", false, true)
+	c.SetCookie("tokenAccess", "", -1, "/", "0.0.0.0", false, true)
+	c.SetCookie("tokenRefresh", "", -1, "/", "0.0.0.0", false, true)
 	c.JSON(200, gin.H{"message": "User logged out"})
 }
 

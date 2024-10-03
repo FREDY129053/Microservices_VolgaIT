@@ -17,7 +17,7 @@ var databaseConn = database.GetConnection()
 
 // Отправка запроса на микросервис больниц
 func _IsHospitalExist(uuid, token string) bool {
-	url := fmt.Sprintf("http://localhost:8082/api/Hospitals/%s", uuid)
+	url := fmt.Sprintf("http://0.0.0.0:8082/api/Hospitals/%s", uuid)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false
@@ -40,7 +40,7 @@ func _IsHospitalExist(uuid, token string) bool {
 
 // Отправка запроса на микросервис аккаунтов для проверки доктора
 func _IsDoctorExist(uuid, token string) bool {
-	url := fmt.Sprintf("http://localhost:8081/api/Accounts/Doctors/%s", uuid)
+	url := fmt.Sprintf("http://0.0.0.0:8081/api/Accounts/Doctors/%s", uuid)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false
@@ -63,7 +63,7 @@ func _IsDoctorExist(uuid, token string) bool {
 
 // Проверка на сущестование комнаты
 func _IsRoomExist(hospitalUUID, token, room string) bool {
-	url := fmt.Sprintf("http://localhost:8082/api/Hospitals/%s/Rooms", hospitalUUID)
+	url := fmt.Sprintf("http://0.0.0.0:8082/api/Hospitals/%s/Rooms", hospitalUUID)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false

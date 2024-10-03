@@ -1,4 +1,4 @@
-POST http://localhost:8084/api/History
+POST http://0.0.0.0:8084/api/History
 content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ content-Type: application/json
 	"data": "Витамина D нет и не надо"
 }
 
-PUT http://localhost:8084/api/History/1
+PUT http://0.0.0.0:8084/api/History/1
 content-Type: application/json
 
 {
@@ -22,6 +22,6 @@ content-Type: application/json
 	"data": "Витамина D нет и не надо"
 }
 
-GET http://localhost:8084/api/History/Account/019ca04c-3415-4bf2-90ba-b57ab60321b1
+GET http://0.0.0.0:8084/api/History/Account/019ca04c-3415-4bf2-90ba-b57ab60321b1
 
-GET http://localhost:8084/api/History/1
+GET http://0.0.0.0:8084/api/History/1

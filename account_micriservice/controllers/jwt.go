@@ -81,7 +81,7 @@ func RefreshAccessToken(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.SetCookie("tokenAccess", tokenNewAccessStr, int(expirationTimeAccess.Unix()), "/", "localhost", false, true)
+	c.SetCookie("tokenAccess", tokenNewAccessStr, int(expirationTimeAccess.Unix()), "/", "0.0.0.0", false, true)
 	
 
 	c.JSON(200, gin.H{"message": "Token refreshed successfully"})
